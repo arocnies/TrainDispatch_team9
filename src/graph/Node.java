@@ -24,7 +24,7 @@ public class Node {
         int n = nodeInstanceCount + 65;
 
         while (n > 90) {
-            name.append(Character.toChars((n / 90) + 64));
+            name.append(Character.toChars((n % 90) + 64));
             n -= 26;
         }
 

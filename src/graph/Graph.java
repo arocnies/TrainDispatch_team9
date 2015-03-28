@@ -81,8 +81,8 @@ public class Graph {
             sb.append("[" + name + "]");
 
             for (Edge edge : list) {
-//                sb.append(" (" + edge.getWeight() + ", " + edge.getNodeBeta() + ")");
-                sb.append(" (" + edge + ")");
+                sb.append(" (" + edge.getWeight() + ", " + edge.getNodeBeta() + ")");
+//                sb.append(" (" + edge + ")");
             }
             sb.append("\n");
         }
