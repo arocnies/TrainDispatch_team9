@@ -80,8 +80,9 @@ public class Graph {
             List<Edge> list = adjacencyMap.get(name);
             sb.append("[" + name + "]");
 
-            for (Edge n : list) {
-                sb.append(" (" + n.getWeight() + ", " + n.getNodeB() + ")");
+            for (Edge edge : list) {
+//                sb.append(" (" + edge.getWeight() + ", " + edge.getNodeBeta() + ")");
+                sb.append(" (" + edge + ")");
             }
             sb.append("\n");
         }

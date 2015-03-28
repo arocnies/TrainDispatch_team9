@@ -23,9 +23,9 @@ public class Node {
         StringBuilder name = new StringBuilder();
         int n = nodeInstanceCount + 65;
 
-        while (n > 155) {
-            name.append(Character.toChars(n % 65));
-            n -= 65;
+        while (n > 90) {
+            name.append(Character.toChars((n / 90) + 64));
+            n -= 26;
         }
 
         name.append(Character.toChars(n));

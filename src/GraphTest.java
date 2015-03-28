@@ -11,7 +11,7 @@ public class GraphTest {
 
 
     public static void main(String[] args) {
-        GraphFactory gf = new GraphFactory(7, "test.graph");
+        GraphFactory gf = new GraphFactory(48, "test.graph");
         Graph myGraph = gf.generateGraph();
 
         System.out.println(myGraph);

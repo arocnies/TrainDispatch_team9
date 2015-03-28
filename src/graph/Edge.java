@@ -6,21 +6,30 @@ package graph;
 
 
 public class Edge {
-    private final Node nodeA;
-    private final Node nodeB;
+    private final Node nodeAlpha;
+    private final Node nodeBeta;
     private int weight;
 
-    public Edge(Node nodeA, Node nodeB, int weight) {
-        this.nodeA = nodeA;
-        this.nodeB = nodeB;
+    public Edge(Node nodeAlpha, Node nodeBeta, int weight) {
+        this.nodeAlpha = nodeAlpha;
+        this.nodeBeta = nodeBeta;
         this.weight = weight;
     }
 
-    public Node getNodeB() {
-        return nodeB;
+    public Node getNodeAlpha() {
+        return nodeAlpha;
+    }
+
+    public Node getNodeBeta() {
+        return nodeBeta;
     }
 
     public int getWeight() {
         return weight;
+    }
+
+    @Override
+    public String toString() {
+        return getNodeAlpha() + "-" + getWeight() + "-" + getNodeBeta();
     }
 }
