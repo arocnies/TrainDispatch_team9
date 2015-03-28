@@ -1,44 +1,58 @@
-//package visualization;
-//
-//import org.graphstream.graph.Edge;
-//import org.graphstream.graph.Graph;
-//import org.graphstream.graph.Node;
-//import org.graphstream.graph.implementations.SingleGraph;
-//
-//import factory.GraphFactory;
-//
-//public class TestInput {
-//	public static void main (String args []) {
-//		Graph graph = new SingleGraph("TestInput");
-//	    GraphFactory gf = new GraphFactory(7, "test.graph");
-//
-//		for ()
-//
-//
-//		// Adds nodes to the graph
-//		graph.addNode("Node-1");
-//		graph.addNode("Node-2");
-//		graph.addNode("Node-3");
-//
-//
-//		// Defines the edges for nodes
-//		graph.addEdge("Edge-1/2", "Node-1", "Node-2");
-//		graph.addEdge("Edge-2/3", "Node-2", "Node-3");
-//		graph.addEdge("Edge-3/1", "Node-3", "Node-1");
-//
-//		// Displays the graph
-//		graph.display();
-//
-//		// Prints out a list of all the nodes on the console
-//		for(Node n:graph.getEachNode()) {
-//			System.out.println(n.getId());
-//		}
-//
-//		System.out.println("~~~~~~~~~~~~");
-//
-//		// Prints out a list of all the edges on the console
-//		for(Edge e:graph.getEachEdge()) {
-//			System.out.println(e.getId());
-//		}
-//	}
-//}
+package visualization;
+
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.EdgeRejectedException;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.SingleGraph;
+
+import factory.GraphFactory;
+
+import java.util.List;
+
+public class TestInput {
+	public static void main (String args []) {
+        Graph graph = new SingleGraph("TestInput");
+
+        GraphFactory gf = new GraphFactory(7, "test.graph");
+        graph.Graph myGraph = gf.generateGraph();
+        System.out.println(myGraph);
+
+        graph.Node[] nodes = myGraph.getNodes();
+
+        // Loop through nodes.
+        for (int i = 0; i < nodes.length; i++) {
+            graph.addNode(nodes[i].toString());
+        }
+
+        // Loop through nodes.
+        for (int i = 0; i < nodes.length; i++) {
+            List<graph.Edge> edges = myGraph.getAdjacency(nodes[i]);
+
+            // Loop through edges.
+            for (graph.Edge edge : edges) {
+                try {
+                    graph.addEdge(edge.toString(), edge.getNodeAlpha().toString(), edge.getNodeBeta().toString());
+                }
+                catch (EdgeRejectedException e) {
+                    // Ignore.
+                }
+            }
+        }
+
+		// Displays the graph
+		graph.display();
+
+		// Prints out a list of all the nodes on the console
+		for(Node n:graph.getEachNode()) {
+			System.out.println(n.getId());
+		}
+
+		System.out.println("~~~~~~~~~~~~");
+
+		// Prints out a list of all the edges on the console
+		for(Edge e:graph.getEachEdge()) {
+			System.out.println(e.getId());
+		}
+	}
+}

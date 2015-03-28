@@ -17,6 +17,7 @@ public class Node {
     }
 
 
+    // Provides name scheme for nodes.
     private static int nodeInstanceCount;
     private static String nextName() {
 
