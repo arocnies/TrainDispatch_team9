@@ -3,8 +3,6 @@
 * A test for the GraphStream library
 */
 
-
-package visualization;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 

@@ -1,5 +1,3 @@
-package visualization;
-
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeRejectedException;
 import org.graphstream.graph.Graph;
@@ -21,20 +19,19 @@ public class VisualizationTest {
         graph.Node[] nodes = myGraph.getNodes();
 
         // Loop through nodes.
-        for (int i = 0; i < nodes.length; i++) {
-            graph.addNode(nodes[i].toString());
+        for (graph.Node node : nodes) {
+            graph.addNode(node.toString());
         }
 
         // Loop through nodes.
-        for (int i = 0; i < nodes.length; i++) {
-            List<graph.Edge> edges = myGraph.getAdjacency(nodes[i]);
+        for (graph.Node node : nodes) {
+            List<graph.Edge> edges = myGraph.getAdjacency(node);
 
             // Loop through edges.
             for (graph.Edge edge : edges) {
                 try {
                     graph.addEdge(edge.toString(), edge.getNodeAlpha().toString(), edge.getNodeBeta().toString());
-                }
-                catch (EdgeRejectedException e) {
+                } catch (EdgeRejectedException e) {
                     // Ignore.
                 }
             }
