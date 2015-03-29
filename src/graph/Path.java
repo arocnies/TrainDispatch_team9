@@ -1,6 +1,7 @@
 package graph;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  */
 
 
-public class Path implements Comparable<Path> {
+public class Path implements Comparable<Path>, Iterable<Edge> {
 
     private final List<Edge> edges = new ArrayList<>();
     private int cost;
@@ -55,5 +56,10 @@ public class Path implements Comparable<Path> {
     @Override
     public int compareTo(Path path) {
         return (this.getCost() - path.getCost());
+    }
+
+    @Override
+    public Iterator<Edge> iterator() {
+        return edges.iterator();
     }
 }

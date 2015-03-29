@@ -28,6 +28,19 @@ public class Edge implements Comparable<Edge> {
         return weight;
     }
 
+    public String getSharedId() {
+        String sharedId = null;
+        if (getStart() != null) {
+            if (getStart().toString().compareTo(getEnd().toString()) < 0) {
+                sharedId = getStart() + "-" + getWeight() + "-" + getEnd();
+            }
+            else {
+                sharedId = getEnd() + "-" + getWeight() + "-" + getStart();
+            }
+        }
+        return sharedId;
+    }
+
     @Override
     public String toString() {
         return getStart() + "-" + getWeight() + "-" + getEnd();

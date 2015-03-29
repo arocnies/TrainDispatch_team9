@@ -74,6 +74,14 @@ public class Graph {
         return nodes;
     }
 
+    public Node getNode(String name) {
+        int index = 0;
+        for (char c : name.toCharArray()) {
+            index += c - 65;
+        }
+        return nodes[index];
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
