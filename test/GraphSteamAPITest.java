@@ -8,7 +8,7 @@ package visualization;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 
-public class Test {
+public class GraphSteamAPITest {
 	public static void main (String args []) {
 		Graph graph = new SingleGraph("Test");
 

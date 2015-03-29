@@ -10,7 +10,7 @@ import graph.GraphFactory;
 
 import java.util.List;
 
-public class TestInput {
+public class VisualizationTest {
 	public static void main (String args []) {
         Graph graph = new SingleGraph("TestInput");
 
