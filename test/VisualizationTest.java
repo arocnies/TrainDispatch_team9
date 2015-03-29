@@ -6,14 +6,11 @@ import org.graphstream.graph.implementations.SingleGraph;
 
 import graph.GraphFactory;
 
-import java.util.List;
-
 public class VisualizationTest {
 	public static void main (String args []) {
         Graph graph = new SingleGraph("TestInput");
 
-        GraphFactory gf = new GraphFactory(7, "test.graph");
-        graph.Graph myGraph = gf.generateGraph();
+        graph.Graph myGraph = GraphFactory.generateGraph("test.graph");
         System.out.println(myGraph);
 
         graph.Node[] nodes = myGraph.getNodes();
@@ -25,7 +22,7 @@ public class VisualizationTest {
 
         // Loop through nodes.
         for (graph.Node node : nodes) {
-            List<graph.Edge> edges = myGraph.getAdjacency(node);
+            graph.Edge[] edges = node.getEdges();
 
             // Loop through edges.
             for (graph.Edge edge : edges) {

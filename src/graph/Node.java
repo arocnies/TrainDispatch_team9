@@ -6,6 +6,7 @@ package graph;
 
 public class Node {
     private final String name;
+    private Edge[] edges;
 
     public Node() {
         name = nextName();
@@ -32,5 +33,13 @@ public class Node {
         name.append(Character.toChars(n));
         nodeInstanceCount++;
         return name.toString();
+    }
+
+    public Edge[] getEdges() {
+        return edges;
+    }
+
+    void setEdges(Edge[] edgeArray) {
+        edges = edgeArray;
     }
 }

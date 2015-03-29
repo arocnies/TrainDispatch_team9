@@ -2,7 +2,7 @@ package graph;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.PriorityQueue;
 
 /**
  * Created by Aaron on 3/27/2015.
@@ -11,14 +11,14 @@ import java.util.Map;
 
 public class Graph {
 
-    private final Map<Node, List<Edge>> adjacencyMap;
+    private final Node[] nodes;
 
     /**
-     * Constructor for new graph using the provided adjacencyMap.
-     * @param adjMap Map of Nodes to List of Nodes
+     * Constructor for new graph using the provided nodes.
+     * @param nodeArray Array of Nodes
      */
-    public Graph(Map<Node, List<Edge>> adjMap) {
-        adjacencyMap = adjMap;
+    public Graph(Node[] nodeArray) {
+        nodes = nodeArray;
     }
 
 
@@ -55,20 +55,32 @@ public class Graph {
      * @return List of Paths
      */
     public List<Path> getPaths(int limit, Node startNode, Node endNode) {
+        // Get edges from starting node.
+        // Add edges to priority queue
+        // Remove current node from queue.
+        // Go to highest priority node.
+        // Add
 
+        PriorityQueue<Node> priorityQueue = new PriorityQueue<Node>();
+        priorityQueue.add(startNode);
+
+        while (!priorityQueue.isEmpty()) {
+            Node n = priorityQueue.poll();
+
+            // Visit each node.
+            for (Edge e : n.getEdges()) {
+                int weight = e.getWeight();
+
+            }
+        }
 
 
 
         return null;
     }
 
-    public List<Edge> getAdjacency(Node node) {
-        return adjacencyMap.get(node);
-    }
-
-
     public Node[] getNodes() {
-        return adjacencyMap.keySet().toArray(new Node[adjacencyMap.keySet().size()]);
+        return nodes;
     }
 
     @Override
@@ -76,11 +88,11 @@ public class Graph {
         StringBuilder sb = new StringBuilder();
 
         // Loop through all nodes
-        for (Node name: adjacencyMap.keySet()){
-            List<Edge> list = adjacencyMap.get(name);
+        for (Node name: nodes) {
             sb.append("[" + name + "]");
 
-            for (Edge edge : list) {
+            Edge[] adjacentEdges = name.getEdges();
+            for (Edge edge : adjacentEdges) {
                 sb.append(" (" + edge.getWeight() + ", " + edge.getNodeBeta() + ")");
 //                sb.append(" (" + edge + ")");
             }

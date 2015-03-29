@@ -1,9 +1,5 @@
 package graph;
 
-import graph.Edge;
-import graph.Graph;
-import graph.Node;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -15,69 +11,57 @@ import java.util.*;
 
 public class GraphFactory {
 
-    private Scanner fileScanner;
-    private final int nodeAmount;
-
-    public GraphFactory(int nodes, String fileName) {
-        nodeAmount = nodes;
-        loadFile(fileName);
-    }
-
-
     /**
-     * Creates an adjacency map of Nodes to Lists of their adjacent Nodes.
-     * @return Map Nodes to List of Nodes (use this for creating Graphs).
+     * Returns a Graph object generated from a file.
+     * @param fileName The name of the source file.
+     * @return Graph generated from file.
      */
-    public Map<Node, List<Edge>> generateAdjacencyMap() {
+    public static Graph generateGraph(String fileName) {
 
-        // AdjacencyList using a map with Nodes as keys.
-        Map<Node, List<Edge>> adjacencyMap = new HashMap<Node, List<Edge>>(nodeAmount);
+        // Declare graph to return.
+        Graph graph = null;
 
-        // Array for building adjacencyMap.
-        Node[] nodes = new Node[nodeAmount];
+        // Try to load graph from file.
+        try {
+            // Load file.
+            Scanner fileScanner = new Scanner(new File(fileName));
+            int nodeCount = fileScanner.nextInt();
+            fileScanner.nextLine();
 
-        // Fill nodes array with empty nodes.
-        for (int i = 0; i < nodes.length; i++) {
-            nodes[i] = new Node();
-        }
-
-        // Loop through nodes.
-        for (int nodeIndex = 0; nodeIndex < nodeAmount; nodeIndex++) {
-            List<Edge> adjacency = new LinkedList<Edge>();
-
-            String[] edges = fileScanner.nextLine().split("/");
-
-            // Loop through edges for a node.
-            for (int j = 0; j < edges.length; j++) {
-                String[] es = edges[j].trim().split(" ");
-                int weight = Integer.parseInt(es[0]);
-                int destIndex = Integer.parseInt(es[1]);
-                Edge edge = new Edge(nodes[nodeIndex], nodes[destIndex], weight);
-                adjacency.add(edge);
+            // Fill nodes with new Nodes.
+            Node[] nodes = new Node[nodeCount];
+            for (int i = 0; i < nodes.length; i++) {
+                nodes[i] = new Node();
             }
 
-            // Map the node to its adjacency.
-            adjacencyMap.put(nodes[nodeIndex], adjacency);
+            // Loop through nodes.
+            for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
+
+                String[] edges = fileScanner.nextLine().split("/");
+                Edge[] adjacency = new Edge[edges.length];
+
+                // Loop through edges for a node.
+                for (int edgeIndex = 0; edgeIndex < edges.length; edgeIndex++) {
+                    // Get edges as string array.
+                    String[] es = edges[edgeIndex].trim().split(" ");
+
+                    // Parse strings into edges.
+                    int weight = Integer.parseInt(es[0]);
+                    int destinationIndex = Integer.parseInt(es[1]);
+                    Edge edge = new Edge(nodes[nodeIndex], nodes[destinationIndex], weight);
+
+                    // Add edge to adjacency for node.
+                    adjacency[edgeIndex] = edge;
+                }
+                // Set node's adjacency.
+                nodes[nodeIndex].setEdges(adjacency);
+            }
+            graph = new Graph(nodes);
         }
-
-        return adjacencyMap;
-    }
-
-    public Graph generateGraph() {
-        Graph graph = new Graph(generateAdjacencyMap());
-        return graph;
-    }
-
-
-    /**
-     * Loads a file into the fileScanner.
-     * @param fileName Name and/or path to file
-     */
-    private void loadFile(String fileName) {
-        try {
-            fileScanner = new Scanner(new File(fileName));
-        } catch (FileNotFoundException e) {
+        catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+        return graph;
     }
 }
