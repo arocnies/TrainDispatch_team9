@@ -1,4 +1,3 @@
-import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeRejectedException;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -37,16 +36,9 @@ public class VisualizationTest {
 		// Displays the graph
 		graph.display();
 
-		// Prints out a list of all the nodes on the console
-		for(Node n:graph.getEachNode()) {
-			System.out.println(n.getId());
-		}
-
-		System.out.println("~~~~~~~~~~~~");
-
-		// Prints out a list of all the edges on the console
-		for(Edge e:graph.getEachEdge()) {
-			System.out.println(e.getId());
+		// Displays labels for all nodes.
+		for(Node n : graph) {
+			n.addAttribute("ui.label", n.getId());
 		}
 	}
 }
