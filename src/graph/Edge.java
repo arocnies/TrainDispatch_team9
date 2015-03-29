@@ -5,23 +5,23 @@ package graph;
  */
 
 
-public class Edge {
-    private final Node nodeAlpha;
-    private final Node nodeBeta;
-    private int weight;
+public class Edge implements Comparable<Edge> {
+    private final Node start;
+    private final Node end;
+    private final int weight;
 
-    public Edge(Node nodeAlpha, Node nodeBeta, int weight) {
-        this.nodeAlpha = nodeAlpha;
-        this.nodeBeta = nodeBeta;
+    public Edge(Node start, Node end, int weight) {
+        this.start = start;
+        this.end = end;
         this.weight = weight;
     }
 
-    public Node getNodeAlpha() {
-        return nodeAlpha;
+    public Node getStart() {
+        return start;
     }
 
-    public Node getNodeBeta() {
-        return nodeBeta;
+    public Node getEnd() {
+        return end;
     }
 
     public int getWeight() {
@@ -30,6 +30,11 @@ public class Edge {
 
     @Override
     public String toString() {
-        return getNodeAlpha() + "-" + getWeight() + "-" + getNodeBeta();
+        return getStart() + "-" + getWeight() + "-" + getEnd();
+    }
+
+    @Override
+    public int compareTo(Edge edge) {
+        return (this.getWeight() - edge.getWeight());
     }
 }

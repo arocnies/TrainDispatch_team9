@@ -1,6 +1,6 @@
 package graph;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,35 +8,52 @@ import java.util.List;
  */
 
 
-public class Path {
+public class Path implements Comparable<Path> {
 
-    private final List<Node> nodes = new LinkedList<Node>();
+    private final List<Edge> edges = new ArrayList<>();
     private int cost;
 
-    void addNode(Node node) {
-        nodes.add(node);
+    public Path(Node startNode) {
+        addEdge(new Edge(null, startNode, 0));
+    }
+
+    public Path(Path path) {
+        edges.addAll(path.getEdges());
+    }
+
+    void addEdge(Edge edge) {
+        edges.add(edge);
+        cost += edge.getWeight();
+    }
+
+    public Edge getLastEdge() {
+        return edges.get(edges.size() - 1);
+    }
+
+    public Node getLastNode() {
+        return getLastEdge().getEnd();
     }
 
     public int getCost() {
 
-        return 0;
-    }
-
-    public List<Node> getNodes() {
-
-
-        return null;
+        return cost;
     }
 
     public List<Edge> getEdges() {
-
-
-        return null;
+        return edges;
     }
 
-    public Path getSubpath() {
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Edge edge : edges) {
+            sb.append(edge + " ");
+        }
+        return sb.toString();
+    }
 
-
-        return null;
+    @Override
+    public int compareTo(Path path) {
+        return (this.getCost() - path.getCost());
     }
 }

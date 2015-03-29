@@ -12,11 +12,12 @@ public class Node {
         name = nextName();
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public Edge[] getEdges() {
+        return edges;
     }
-
+    void setEdges(Edge[] edgeArray) {
+        edges = edgeArray;
+    }
 
     // Provides name scheme for nodes.
     private static int nodeInstanceCount;
@@ -35,11 +36,8 @@ public class Node {
         return name.toString();
     }
 
-    public Edge[] getEdges() {
-        return edges;
-    }
-
-    void setEdges(Edge[] edgeArray) {
-        edges = edgeArray;
+    @Override
+    public String toString() {
+        return name;
     }
 }

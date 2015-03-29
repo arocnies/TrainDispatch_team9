@@ -26,7 +26,7 @@ public class VisualizationTest {
             // Loop through edges.
             for (graph.Edge edge : edges) {
                 try {
-                    graph.addEdge(edge.toString(), edge.getNodeAlpha().toString(), edge.getNodeBeta().toString());
+                    graph.addEdge(edge.toString(), edge.getStart().toString(), edge.getEnd().toString());
                 } catch (EdgeRejectedException e) {
                     // Ignore.
                 }
