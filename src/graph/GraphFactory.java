@@ -2,12 +2,11 @@ package graph;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.Scanner;
 
 /**
  * Created by Aaron on 3/27/2015.
  */
-
 
 public class GraphFactory {
 
@@ -61,7 +60,6 @@ public class GraphFactory {
         catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
         return graph;
     }
 }

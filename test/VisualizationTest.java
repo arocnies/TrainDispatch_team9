@@ -4,9 +4,8 @@ import org.graphstream.graph.implementations.SingleGraph;
 
 import graph.GraphFactory;
 
-import java.util.List;
-
 public class VisualizationTest {
+
 	public static void main (String args []) {
         Graph graph = new SingleGraph("TestInput");
 
@@ -14,7 +13,7 @@ public class VisualizationTest {
         // This isn't quite working...
 //        graph.addAttribute("ui.stylesheet", "node { text-alignment: under; text-style: bold; text-color: white; text-background-mode: rounded-box; text-background-color: red; text-padding: 1px; text-offset: 0px, 2px; } ");
 
-        graph.Graph myGraph = GraphFactory.generateGraph("test.graph");
+        graph.Graph myGraph = GraphFactory.generateGraph("res/test.graph");
         System.out.println(myGraph);
 
         graph.Node[] nodes = myGraph.getNodes();

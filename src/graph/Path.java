@@ -8,7 +8,6 @@ import java.util.List;
  * Created by Aaron on 3/27/2015.
  */
 
-
 public class Path implements Comparable<Path>, Iterable<Edge> {
 
     private final List<Edge> edges = new ArrayList<>();
@@ -36,7 +35,6 @@ public class Path implements Comparable<Path>, Iterable<Edge> {
     }
 
     public int getCost() {
-
         return cost;
     }
 

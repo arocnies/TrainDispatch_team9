@@ -6,17 +6,16 @@ import java.util.*;
  * Created by Aaron on 3/27/2015.
  */
 
-
 public class Graph {
 
     private final Node[] nodes;
 
     /**
      * Constructor for new graph using the provided nodes.
-     * @param nodeArray Array of Nodes
+     * @param nodes Array of Nodes
      */
-    public Graph(Node[] nodeArray) {
-        nodes = nodeArray;
+    public Graph(Node[] nodes) {
+        this.nodes = nodes;
     }
 
     /**
@@ -66,7 +65,6 @@ public class Graph {
                 }
             }
         }
-
         return minPaths.get(endNode);
     }
 
@@ -99,19 +97,4 @@ public class Graph {
         }
         return sb.toString();
     }
-
-//    /**
-//     * Returns a list of Path objects leading from startNode to endNode.
-//     * @param limit The maximum number of paths to return
-//     * @param startNode The node of origin.
-//     * @param endNode The final destination node.
-//     * @return List of Paths
-//     */
-//    public List<Path> getPaths(int limit, Node startNode, Node endNode) {
-//
-//
-//
-//
-//        return null;
-//    }
 }

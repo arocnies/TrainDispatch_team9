@@ -6,18 +6,15 @@ import graph.Node;
  * Created by Aaron on 3/27/2015.
  */
 
-
 public class GraphTest {
 
-
     public static void main(String[] args) {
-        Graph myGraph = GraphFactory.generateGraph("test.graph");
+        Graph myGraph = GraphFactory.generateGraph("res/test.graph");
 
         System.out.println(myGraph);
 
-        Node startNode = myGraph.getNodes()[0];
-        Node endNode = myGraph.getNodes()[1];
+        Node startNode = myGraph.getNode("G");
+        Node endNode = myGraph.getNode("E");
         System.out.println(myGraph.getPath(startNode, endNode));
     }
-
 }

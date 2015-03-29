@@ -15,6 +15,7 @@ public class Node {
     public Edge[] getEdges() {
         return edges;
     }
+
     void setEdges(Edge[] edgeArray) {
         edges = edgeArray;
     }

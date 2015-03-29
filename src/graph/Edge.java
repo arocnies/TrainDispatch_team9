@@ -4,7 +4,6 @@ package graph;
  * Created by Aaron on 3/27/2015.
  */
 
-
 public class Edge implements Comparable<Edge> {
     private final Node start;
     private final Node end;
