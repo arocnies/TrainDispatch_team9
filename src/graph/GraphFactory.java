@@ -1,4 +1,4 @@
-package factory;
+package graph;
 
 import graph.Edge;
 import graph.Graph;

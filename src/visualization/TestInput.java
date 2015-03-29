@@ -6,7 +6,7 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 
-import factory.GraphFactory;
+import graph.GraphFactory;
 
 import java.util.List;
 

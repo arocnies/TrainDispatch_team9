@@ -1,4 +1,4 @@
-import factory.GraphFactory;
+import graph.GraphFactory;
 import graph.Graph;
 import graph.Node;
 
