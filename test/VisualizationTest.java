@@ -1,8 +1,13 @@
+import graph.*;
+import graph.Edge;
+import graph.GraphFactory;
 import graph.Path;
 import org.graphstream.graph.*;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 
-import graph.GraphFactory;
+import java.util.Random;
 
 public class VisualizationTest {
 
@@ -45,20 +50,40 @@ public class VisualizationTest {
 			n.addAttribute("ui.label", n.getId());
 		}
 
-        // Create path between two nodes.
-        graph.Node startNode = myGraph.getNode("G");
-        graph.Node endNode = myGraph.getNode("D");
-        Path myPath = myGraph.getPath(startNode, endNode);
+        // Test animation of all paths.
+        // This is a messy test of animating paths. Our true visualization should be broken up into proper methods.
+        String[] letters = {"A", "B", "C", "D", "E", "F", "G"};
 
-        // Color path.
-        for (graph.Edge edge : myPath) {
-            graph.addAttribute("ui.stylesheet", "edge#\"" + edge.getSharedId() + "\" { arrow-shape: arrow; fill-color: red; size: 5px; }");
-            graph.addAttribute("ui.stylesheet", "node#\"" + edge.getEnd() + "\" { fill-color: red; }");
+        // Loop through all letters with a nested loop through all letters.
+        for (String n1 : letters) {
+            for (String n2 : letters) {
+
+                // Create path between two nodes.
+                graph.Node startNode = myGraph.getNode(n1);
+                graph.Node endNode = myGraph.getNode(n2);
+                Path myPath = myGraph.getPath(startNode, endNode);
+
+                // Color path.
+                for (Edge edge : myPath) {
+                    graph.addAttribute("ui.stylesheet", "edge#\"" + edge.getSharedId() + "\" { fill-color: red; size: 5px; }");
+                    graph.addAttribute("ui.stylesheet", "node#\"" + edge.getEnd() + "\" { fill-color: red; }");
+                }
+                graph.addAttribute("ui.stylesheet", "node#\"" + startNode + "\" { fill-color: blue; size: 20px; }");
+                graph.addAttribute("ui.stylesheet", "node#\"" + endNode + "\" { fill-color: yellow; size: 20px; }");
+
+                // Print path to console.
+                System.out.println(myPath);
+
+                // Sleep the thread one second.
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                // Remove colors from graph.
+                graph.removeAttribute("ui.stylesheet");
+            }
         }
-        graph.addAttribute("ui.stylesheet", "node#\"" + startNode + "\" { fill-color: blue; size: 20px; }");
-        graph.addAttribute("ui.stylesheet", "node#\"" + endNode + "\" { fill-color: blue; size: 20px; }");
-
-        // Print path to console.
-        System.out.println(myPath);
     }
 }

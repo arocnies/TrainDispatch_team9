@@ -26,46 +26,53 @@ public class Graph {
      */
     public Path getPath(Node startNode, Node endNode ) {
 
-        // Minimum distance from startNode to key node.
-        Map<Node, Path> minPaths = new HashMap<>(nodes.length);
-        for (Node n : nodes) {
-            minPaths.put(n, new Path(startNode));
-        }
+        Path retPath = new Path(startNode);
 
-        // Path to return after it has been filled with edges.
-        Path path = new Path(startNode);
+        if (startNode != endNode) {
+            // Minimum distance from startNode to key node.
+            Map<Node, Path> minPaths = new HashMap<>(nodes.length);
+            for (Node n : nodes) {
+                minPaths.put(n, new Path(startNode));
+            }
 
-        // Priority queue by weight.
-        PriorityQueue<Path> priorityQueue = new PriorityQueue<>();
-        priorityQueue.add(path);
+            // Path to return after it has been filled with edges.
+            Path path = new Path(startNode);
 
-        while (!priorityQueue.isEmpty()) {
-            Path currentPath = priorityQueue.poll();
-            Node lastNode = currentPath.getLastNode();
+            // Priority queue by weight.
+            PriorityQueue<Path> priorityQueue = new PriorityQueue<>();
+            priorityQueue.add(path);
 
-            // Look at each edge of the current node.
-            for (Edge edge : lastNode.getEdges()) {
-                Node nextNode = edge.getEnd();
+            while (!priorityQueue.isEmpty()) {
+                Path currentPath = priorityQueue.poll();
+                Node lastNode = currentPath.getLastNode();
 
-                // If nextNode is not the last node.
-                if (nextNode != currentPath.getLastEdge().getStart()) {
+                // Look at each edge of the current node.
+                for (Edge edge : lastNode.getEdges()) {
+                    Node nextNode = edge.getEnd();
 
-                    // If my current nodes distance is shorter than stored distance.
-                    int distanceToNode = currentPath.getCost() + edge.getWeight();
-                    if (distanceToNode < minPaths.get(nextNode).getCost() || minPaths.get(nextNode).getCost() == 0) {
+                    // If nextNode is not the last node.
+                    if (nextNode != currentPath.getLastEdge().getStart()) {
 
-                        Path betterPath = new Path(currentPath);
-                        betterPath.addEdge(edge);
+                        // If my current nodes distance is shorter than stored distance.
+                        int distanceToNode = currentPath.getCost() + edge.getWeight();
+                        if (distanceToNode < minPaths.get(nextNode).getCost() || minPaths.get(nextNode).getCost() == 0) {
 
-                        // Replace old minPath in queue with current path with edge.
-                        priorityQueue.remove(minPaths.get(nextNode));
-                        priorityQueue.add(betterPath);
-                        minPaths.put(betterPath.getLastNode(), betterPath);
+                            Path betterPath = new Path(currentPath);
+                            betterPath.addEdge(edge);
+
+                            // Replace old minPath in queue with current path with edge.
+                            priorityQueue.remove(minPaths.get(nextNode));
+                            priorityQueue.add(betterPath);
+                            minPaths.put(betterPath.getLastNode(), betterPath);
+                        }
                     }
                 }
             }
+
+            // Found shortest paths, store result.
+            retPath = minPaths.get(endNode);
         }
-        return minPaths.get(endNode);
+        return retPath;
     }
 
     public Node[] getNodes() {
