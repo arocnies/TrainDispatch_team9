@@ -1,4 +1,3 @@
-import graph.*;
 import graph.Edge;
 import graph.GraphFactory;
 import graph.Path;
@@ -7,16 +6,14 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 
-import java.util.Random;
-
 public class VisualizationTest {
 
 	public static void main (String args []) {
         Graph graph = new SingleGraph("TestInput");
 
 
-        // This isn't quite working...
-//        graph.addAttribute("ui.stylesheet", "node { text-alignment: under; text-style: bold; text-color: white; text-background-mode: rounded-box; text-background-color: red; text-padding: 1px; text-offset: 0px, 2px; } ");
+        // This line does not produce the expected result... why? (See 'http://graphstream-project.org/doc/Tutorials/GraphStream-CSS-Reference_1.2/')
+        graph.addAttribute("ui.stylesheet", "node { text-alignment: under; text-style: bold; text-color: white; text-background-mode: rounded-box; text-background-color: red; text-padding: 1px; text-offset: 0px, 2px; } ");
 
         graph.Graph myGraph = GraphFactory.generateGraph("res/test.graph");
         System.out.println(myGraph);
@@ -52,24 +49,21 @@ public class VisualizationTest {
 
         // Test animation of all paths.
         // This is a messy test of animating paths. Our true visualization should be broken up into proper methods.
-        String[] letters = {"A", "B", "C", "D", "E", "F", "G"};
 
-        // Loop through all letters with a nested loop through all letters.
-        for (String n1 : letters) {
-            for (String n2 : letters) {
+        // Loop through all nodes with an inner loop through all nodes.
+        for (graph.Node n1 : myGraph.getNodes()) {
+            for (graph.Node n2 : myGraph.getNodes()) {
 
                 // Create path between two nodes.
-                graph.Node startNode = myGraph.getNode(n1);
-                graph.Node endNode = myGraph.getNode(n2);
-                Path myPath = myGraph.getPath(startNode, endNode);
+                Path myPath = myGraph.getPath(n1, n2);
 
                 // Color path.
                 for (Edge edge : myPath) {
                     graph.addAttribute("ui.stylesheet", "edge#\"" + edge.getSharedId() + "\" { fill-color: red; size: 5px; }");
                     graph.addAttribute("ui.stylesheet", "node#\"" + edge.getEnd() + "\" { fill-color: red; }");
                 }
-                graph.addAttribute("ui.stylesheet", "node#\"" + startNode + "\" { fill-color: blue; size: 20px; }");
-                graph.addAttribute("ui.stylesheet", "node#\"" + endNode + "\" { fill-color: yellow; size: 20px; }");
+                graph.addAttribute("ui.stylesheet", "node#\"" + n1 + "\" { fill-color: blue; size: 20px; }");
+                graph.addAttribute("ui.stylesheet", "node#\"" + n2 + "\" { fill-color: yellow; size: 20px; }");
 
                 // Print path to console.
                 System.out.println(myPath);
