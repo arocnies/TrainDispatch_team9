@@ -1,3 +1,4 @@
+import graph.Edge;
 import graph.GraphFactory;
 import graph.Graph;
 import graph.Node;
@@ -13,8 +14,31 @@ public class GraphTest {
 
         System.out.println(myGraph);
 
-        Node startNode = myGraph.getNode("G");
-        Node endNode = myGraph.getNode("E");
-        System.out.println(myGraph.getPath(startNode, endNode));
+        // Check if graph is undirected.
+        boolean graphUndirected = true;
+
+        // Loop through nodes.
+        for (Node node: myGraph.getNodes()) {
+
+            // Loop through node's edges.
+            for (Edge edge : node.getEdges()) {
+                boolean edgeUndirected = false;
+
+                // Find match for edge.
+                for (Edge e2 : edge.getEnd().getEdges()) {
+                    if (e2.getEnd() == node) {
+                        edgeUndirected = true;
+                        break;
+                    }
+                }
+
+                // If match not found, flag as directed.
+                if (!edgeUndirected) {
+                    graphUndirected = false;
+                    System.out.println("Edge " + edge + " has no complement.");
+                }
+            }
+        }
+        System.out.println(graphUndirected? "Graph is undirected!" : "Graph is directed!");
     }
 }
