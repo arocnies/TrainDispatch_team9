@@ -10,7 +10,7 @@ public class Train {
     private final Node startNode;
     private final Node endNode;
     private final int departureTime;
-    private Route route;
+    private Itinerary itinerary;
 
     public Train(Node startNode, Node endNode, int departureTime) {
         this.startNode = startNode;
@@ -18,7 +18,11 @@ public class Train {
         this.departureTime = departureTime;
     }
 
-    public Route getRoute() {
-        return route;
+    public void setItinerary(Itinerary itin) {
+        itinerary = itin;
+    }
+
+    public Itinerary getItinerary() {
+        return itinerary;
     }
 }

@@ -1,6 +1,6 @@
 package graph;
 
-import dispatch.RouteElement;
+import dispatch.Route;
 
 import java.util.*;
 
@@ -8,10 +8,11 @@ import java.util.*;
  * Created by Aaron on 3/27/2015.
  */
 
-public class Path extends RouteElement implements Comparable<Path>, Iterable<Edge> {
+public class Path implements Route, Comparable<Path>, Iterable<Edge> {
 
     private final List<Edge> edges = new ArrayList<>();
     private final Set<Node> nodes = new HashSet<>();
+    private int cost;
 
     public Path(Node startNode) {
         addEdge(new Edge(null, startNode, 0));
