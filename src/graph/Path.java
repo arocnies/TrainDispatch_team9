@@ -1,17 +1,17 @@
 package graph;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import dispatch.RouteElement;
+
+import java.util.*;
 
 /**
  * Created by Aaron on 3/27/2015.
  */
 
-public class Path implements Comparable<Path>, Iterable<Edge> {
+public class Path extends RouteElement implements Comparable<Path>, Iterable<Edge> {
 
     private final List<Edge> edges = new ArrayList<>();
-    private int cost;
+    private final Set<Node> nodes = new HashSet<>();
 
     public Path(Node startNode) {
         addEdge(new Edge(null, startNode, 0));
@@ -23,6 +23,8 @@ public class Path implements Comparable<Path>, Iterable<Edge> {
 
     void addEdge(Edge edge) {
         edges.add(edge);
+        nodes.add(edge.getStart());
+        nodes.add(edge.getEnd());
         cost += edge.getWeight();
     }
 
@@ -34,21 +36,18 @@ public class Path implements Comparable<Path>, Iterable<Edge> {
         return getLastEdge().getEnd();
     }
 
+    @Override
     public int getCost() {
         return cost;
     }
 
-    public List<Edge> getEdges() {
-        return edges;
+    @Override
+    public List<Node> getNodes() {
+        return new ArrayList<>(nodes);
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (Edge edge : edges) {
-            sb.append(edge + " ");
-        }
-        return sb.toString();
+    public List<Edge> getEdges() {
+        return edges;
     }
 
     @Override
@@ -59,5 +58,14 @@ public class Path implements Comparable<Path>, Iterable<Edge> {
     @Override
     public Iterator<Edge> iterator() {
         return edges.iterator();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Edge edge : edges) {
+            sb.append(edge + " ");
+        }
+        return sb.toString();
     }
 }
