@@ -63,11 +63,15 @@ public class VisualizationTest {
 
                 // Color path.
                 for (Edge edge : myPath) {
-                    graph.addAttribute("ui.stylesheet", "edge#\"" + edge.getSharedId() + "\" { fill-color: red; size: 5px; }");
-                    graph.addAttribute("ui.stylesheet", "node#\"" + edge.getEnd() + "\" { fill-color: red; }");
+                    graph.addAttribute("ui.stylesheet", "edge#\"" + edge.getSharedId() + style.redEdge() );
+                    // "\"  { shadow-mode: plain; shadow-color: red; shadow-offset: 0; }");
+                    //graph.addAttribute("ui.stylesheet", style.redEdge());
+                    graph.addAttribute("ui.stylesheet", "node#\"" + edge.getEnd() + //style.redNode() );
+                            "\"  { shadow-mode: plain; shadow-color: red; shadow-offset: 0; }");
+                    //graph.addAttribute("ui.stylesheet", style.redNode());
                 }
                 graph.addAttribute("ui.stylesheet", "node#\"" + n1 + "\" { fill-color: blue; size: 20px; }");
-                graph.addAttribute("ui.stylesheet", "node#\"" + n2 + "\" { fill-color: yellow; size: 20px; }");
+                graph.addAttribute("ui.stylesheet", "node#\"" + n2 + "\" { fill-color: green; size: 20px; }");
 
                 // Print path to console.
                 System.out.println(myPath);
