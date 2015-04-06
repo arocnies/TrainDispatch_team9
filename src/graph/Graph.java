@@ -22,9 +22,10 @@ public class Graph {
      * Returns a Path object leading from startNode to endNode found using Dijkstra's algorithm.
      * @param startNode The node of origin.
      * @param endNode The final destination node.
+     * @param excludedEdge An edge to exlude from the calculation.
      * @return Path
      */
-    public Path getPath(Node startNode, Node endNode ) {
+    public Path getPath(Node startNode, Node endNode, Edge excludedEdge) {
 
         Path retPath = new Path(startNode);
 
@@ -48,22 +49,26 @@ public class Graph {
 
                 // Look at each edge of the current node.
                 for (Edge edge : lastNode.getEdges()) {
-                    Node nextNode = edge.getEnd();
 
-                    // If nextNode is not the last node.
-                    if (nextNode != currentPath.getLastEdge().getStart()) {
+                    // If not excluded edge.
+                    if (edge != excludedEdge) {
+                        Node nextNode = edge.getEnd();
 
-                        // If my current nodes distance is shorter than stored distance.
-                        int distanceToNode = currentPath.getCost() + edge.getWeight();
-                        if (distanceToNode < minPaths.get(nextNode).getCost() || minPaths.get(nextNode).getCost() == 0) {
+                        // If nextNode is not the last node.
+                        if (nextNode != currentPath.getLastEdge().getStart()) {
 
-                            Path betterPath = new Path(currentPath);
-                            betterPath.addEdge(edge);
+                            // If my current nodes distance is shorter than stored distance.
+                            int distanceToNode = currentPath.getCost() + edge.getWeight();
+                            if (distanceToNode < minPaths.get(nextNode).getCost() || minPaths.get(nextNode).getCost() == 0) {
 
-                            // Replace old minPath in queue with current path with edge.
-                            priorityQueue.remove(minPaths.get(nextNode));
-                            priorityQueue.add(betterPath);
-                            minPaths.put(betterPath.getLastNode(), betterPath);
+                                Path betterPath = new Path(currentPath);
+                                betterPath.addEdge(edge);
+
+                                // Replace old minPath in queue with current path with edge.
+                                priorityQueue.remove(minPaths.get(nextNode));
+                                priorityQueue.add(betterPath);
+                                minPaths.put(betterPath.getLastNode(), betterPath);
+                            }
                         }
                     }
                 }
@@ -73,6 +78,10 @@ public class Graph {
             retPath = minPaths.get(endNode);
         }
         return retPath;
+    }
+
+    public Path getPath(Node startNode, Node endNode) {
+        return getPath(startNode, endNode, null);
     }
 
     public Node[] getNodes() {
