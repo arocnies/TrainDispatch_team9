@@ -2,9 +2,7 @@ package dispatch;
 
 import graph.Node;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by aaron on 4/6/15.
@@ -12,13 +10,13 @@ import java.util.Random;
 
 public class Schedule {
 
-    private final List<Train> trains;
+    private final Set<Train> trains;
     private final List<Node> nodes;
     private final int cutOffTime;
     private final Random rng;
 
     public Schedule(int trainAmount, List<Node> nodeList, int time) {
-        trains = new LinkedList<>();
+        trains = new HashSet<>();
         cutOffTime = time;
         nodes = nodeList;
         rng = new Random();
@@ -40,7 +38,7 @@ public class Schedule {
         return nodes.get(rng.nextInt(nodes.size()));
     }
 
-    public List<Train> getTrains() {
+    public Set<Train> getTrains() {
         return trains;
     }
 

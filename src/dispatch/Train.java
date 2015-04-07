@@ -33,4 +33,10 @@ public class Train {
     public Node getEnd() {
         return endNode;
     }
+
+    public int getDelay() {
+
+
+        return 0;
+    }
 }

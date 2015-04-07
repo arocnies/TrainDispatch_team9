@@ -1,22 +1,24 @@
 package graph;
 
+import java.util.Set;
+
 /**
  * Created by Aaron on 3/27/2015.
  */
 
 public class Node {
     private final String name;
-    private Edge[] edges;
+    private Set<Edge> edges;
 
     public Node() {
         name = nextName();
     }
 
-    public Edge[] getEdges() {
+    public Set<Edge> getEdges() {
         return edges;
     }
 
-    void setEdges(Edge[] edgeArray) {
+    void setEdges(Set<Edge> edgeArray) {
         edges = edgeArray;
     }
 

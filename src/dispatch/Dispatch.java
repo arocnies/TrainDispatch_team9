@@ -35,7 +35,8 @@ public class Dispatch {
             routeTrain(train);
         }
 
-        return new Plan(schedule);
+//        return new Plan(schedule);
+        return null;
     }
 
     // Routes a single train.
