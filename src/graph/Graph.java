@@ -8,7 +8,8 @@ import java.util.*;
 
 public class Graph {
 
-    private final Node[] nodes;
+    private final Node[] nodes; // TODO: Change to set or list?
+    private final Set<Edge> edges;
 
     /**
      * Constructor for new graph using the provided nodes.
@@ -16,6 +17,12 @@ public class Graph {
      */
     public Graph(Node[] nodes) {
         this.nodes = nodes;
+
+        // Fill edges list with all edges.
+        edges = new HashSet<>();
+        for (Node node : nodes) {
+            Collections.addAll(edges, node.getEdges());
+        }
     }
 
     /**
@@ -94,6 +101,10 @@ public class Graph {
             index += c - 65;
         }
         return nodes[index];
+    }
+
+    public Set<Edge> getEdges() {
+        return edges;
     }
 
     @Override

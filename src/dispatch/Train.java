@@ -25,4 +25,12 @@ public class Train {
     public Itinerary getItinerary() {
         return itinerary;
     }
+
+    public Node getStart() {
+        return startNode;
+    }
+
+    public Node getEnd() {
+        return endNode;
+    }
 }

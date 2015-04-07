@@ -28,7 +28,7 @@ public class GraphFactory {
             fileScanner.nextLine();
 
             // Fill nodes with new Nodes.
-            Node[] nodes = new Node[nodeCount];
+            Node[] nodes = new Node[nodeCount]; // TODO: Change to list (ArrayList).
             for (int i = 0; i < nodes.length; i++) {
                 nodes[i] = new Node();
             }
