@@ -12,6 +12,7 @@ public class Path implements Route, Comparable<Path>, Iterable<Edge> {
 
     private final List<Edge> edges = new ArrayList<>();
     private final Set<Node> nodes = new HashSet<>();
+    private final List<Node> nodeList = new LinkedList<>();
     private int cost;
 
     public Path(Node startNode) {
@@ -24,9 +25,14 @@ public class Path implements Route, Comparable<Path>, Iterable<Edge> {
 
     void addEdge(Edge edge) {
         edges.add(edge);
-        nodes.add(edge.getStart());
-        nodes.add(edge.getEnd());
+        addNode(edge.getStart());
+        addNode(edge.getEnd());
         cost += edge.getWeight();
+    }
+
+    private void addNode(Node n) {
+        nodes.add(n);
+        nodeList.add(n);
     }
 
     public Edge getLastEdge() {
@@ -44,7 +50,7 @@ public class Path implements Route, Comparable<Path>, Iterable<Edge> {
 
     @Override
     public List<Node> getNodes() {
-        return new ArrayList<>(nodes);
+        return nodeList;
     }
 
     public List<Edge> getEdges() {
