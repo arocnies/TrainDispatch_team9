@@ -2,7 +2,7 @@ package graph;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by Aaron on 3/27/2015.
@@ -28,34 +28,34 @@ public class GraphFactory {
             fileScanner.nextLine();
 
             // Fill nodes with new Nodes.
-            Node[] nodes = new Node[nodeCount]; // TODO: Change to list (ArrayList).
-            for (int i = 0; i < nodes.length; i++) {
-                nodes[i] = new Node();
+            List<Node> nodes = new ArrayList<>(nodeCount);
+            for (int i = 0; i < nodeCount; i++) {
+                nodes.add(new Node());
             }
 
             // Loop through nodes.
             for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
 
                 String[] edges = fileScanner.nextLine().split("/");
-                Edge[] adjacency = new Edge[edges.length];
+                Set<Edge> adjacency = new HashSet<>(edges.length);
 
                 // Loop through edges for a node.
-                for (int edgeIndex = 0; edgeIndex < edges.length; edgeIndex++) {
+                for (String edge1 : edges) {
                     // Get edges as string array.
-                    String[] es = edges[edgeIndex].trim().split(" ");
+                    String[] es = edge1.trim().split(" ");
 
                     // Parse strings into edges.
                     int weight = Integer.parseInt(es[0]);
                     int destinationIndex = Integer.parseInt(es[1]);
-                    Edge edge = new Edge(nodes[nodeIndex], nodes[destinationIndex], weight);
+                    Edge edge = new Edge(nodes.get(nodeIndex), nodes.get(destinationIndex), weight);
 
                     // Add edge to adjacency for node.
-                    adjacency[edgeIndex] = edge;
+                    adjacency.add(edge);
                 }
                 // Set node's adjacency.
-                nodes[nodeIndex].setEdges(adjacency);
+                nodes.get(nodeIndex).setEdges(adjacency);
             }
-            graph = new Graph(nodes);
+            graph = new Graph(new HashSet<>(nodes));
         }
         catch (FileNotFoundException e) {
             e.printStackTrace();
