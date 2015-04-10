@@ -7,6 +7,8 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 import visualization.Styles;
 
+import java.util.Set;
+
 public class VisualizationTest {
 
 	public static void main (String args []) {
@@ -17,7 +19,7 @@ public class VisualizationTest {
         graph.Graph myGraph = GraphFactory.generateGraph("res/test.graph");
         System.out.println(myGraph);
 
-        graph.Node[] nodes = myGraph.getNodes();
+        Set<graph.Node> nodes = myGraph.getNodes();
 
         // Loop through nodes.
         for (graph.Node node : nodes) {
@@ -26,7 +28,7 @@ public class VisualizationTest {
 
         // Loop through nodes.
         for (graph.Node node : nodes) {
-            graph.Edge[] edges = node.getEdges();
+            Set<graph.Edge> edges = node.getEdges();
 
             // Loop through edges.
             for (graph.Edge edge : edges) {

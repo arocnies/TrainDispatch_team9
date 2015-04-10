@@ -16,8 +16,8 @@ public class Delay implements Route {
     private final Train causeTrain;
     private final int cost;
 
-    public Delay(Node node, Edge edge, Train causeTrain, int cost) {
-        this.node = node;
+    public Delay(Edge edge, Train causeTrain, int cost) {
+        this.node = edge.getStart();
         this.edge = edge;
         this.causeTrain = causeTrain;
         this.cost = cost;
@@ -27,18 +27,25 @@ public class Delay implements Route {
         return causeTrain;
     }
 
-    @Override
     public int getCost() {
         return cost;
     }
 
-    @Override
-    public List<Node> getNodes() {
-        return Collections.singletonList(node);
+    public Node getNode() {
+        return node;
+    }
+
+    public Edge getEdge() {
+        return edge;
     }
 
     @Override
     public List<Edge> getEdges() {
         return Collections.singletonList(edge);
+    }
+
+    @Override
+    public List<Node> getNodes() {
+        return Collections.singletonList(node);
     }
 }

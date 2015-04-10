@@ -26,7 +26,7 @@ public class GraphTest {
 
                 // Find match for edge.
                 for (Edge e2 : edge.getEnd().getEdges()) {
-                    if (e2.getEnd() == node) {
+                    if (e2.getEnd() == node && edge.getWeight() == e2.getWeight()) {
                         edgeUndirected = true;
                         break;
                     }
