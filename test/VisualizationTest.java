@@ -10,10 +10,10 @@ import visualization.Styles;
 import java.util.Set;
 
 public class VisualizationTest {
+    public static final Graph gsGraph = new SingleGraph("TestInput");
+    public static final Styles style = new Styles();
 
 	public static void main (String args []) {
-        Graph graph = new SingleGraph("TestInput");
-        Styles style = new Styles();
         System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 
         graph.Graph myGraph = GraphFactory.generateGraph("res/test.graph");
@@ -23,7 +23,7 @@ public class VisualizationTest {
 
         // Loop through nodes.
         for (graph.Node node : nodes) {
-            graph.addNode(node.toString());
+            gsGraph.addNode(node.toString());
         }
 
         // Loop through nodes.
@@ -33,7 +33,7 @@ public class VisualizationTest {
             // Loop through edges.
             for (graph.Edge edge : edges) {
                 try {
-                    graph.addEdge(edge.getSharedId(), edge.getStart().toString(), edge.getEnd().toString(), false);
+                    gsGraph.addEdge(edge.getSharedId(), edge.getStart().toString(), edge.getEnd().toString(), false);
                 } catch (EdgeRejectedException | IdAlreadyInUseException e) {
                     // Ignore.
                 }
@@ -41,21 +41,24 @@ public class VisualizationTest {
         }
 
 		// Improve the output and initial labeling
-        graph.addAttribute("ui.quality");
-        graph.addAttribute("ui.antialias");
-        graph.addAttribute("ui.stylesheet", style.standardNode());
+        gsGraph.addAttribute("ui.quality");
+        gsGraph.addAttribute("ui.antialias");
+        gsGraph.addAttribute("ui.stylesheet", style.standardNode());
 
         // Displays the graph
-		graph.display();
+        gsGraph.display();
 
 		// Displays labels for all nodes.
-		for (Node n : graph) {
+		for (Node n : gsGraph) {
 			n.addAttribute("ui.label", n.getId());
 		}
 
-        // Test animation of all paths.
-        // This is a messy test of animating paths. Our true visualization should be broken up into proper methods.
+        testPaths(myGraph);
+        testPaths(myGraph);
+    }
 
+    public static void testPaths(graph.Graph myGraph) {
+        // Test animation of all paths.
         // Loop through all nodes with an inner loop through all nodes.
         for (graph.Node n1 : myGraph.getNodes()) {
             for (graph.Node n2 : myGraph.getNodes()) {
@@ -65,29 +68,29 @@ public class VisualizationTest {
 
                 // Color path.
                 for (Edge edge : myPath) {
-                    graph.addAttribute("ui.stylesheet", "edge#\"" + edge.getSharedId() + style.redEdge() );
+                    gsGraph.addAttribute("ui.stylesheet", "edge#\"" + edge.getSharedId() + style.redEdge() );
                     // "\"  { shadow-mode: plain; shadow-color: red; shadow-offset: 0; }");
                     //graph.addAttribute("ui.stylesheet", style.redEdge());
-                    graph.addAttribute("ui.stylesheet", "node#\"" + edge.getEnd() + //style.redNode() );
+                    gsGraph.addAttribute("ui.stylesheet", "node#\"" + edge.getEnd() + //style.redNode() );
                             "\"  { shadow-mode: plain; shadow-color: red; shadow-offset: 0; }");
                     //graph.addAttribute("ui.stylesheet", style.redNode());
                 }
-                graph.addAttribute("ui.stylesheet", "node#\"" + n1 + "\" { fill-color: blue; size: 20px; }");
-                graph.addAttribute("ui.stylesheet", "node#\"" + n2 + "\" { fill-color: green; size: 20px; }");
+                gsGraph.addAttribute("ui.stylesheet", "node#\"" + n1 + "\" { fill-color: blue; size: 20px; }");
+                gsGraph.addAttribute("ui.stylesheet", "node#\"" + n2 + "\" { fill-color: green; size: 20px; }");
 
                 // Print path to console.
                 System.out.println(myPath);
 
                 // Sleep the thread one second.
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(400);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
                 // Remove colors from graph.
-                graph.removeAttribute("ui.stylesheet");
-                graph.addAttribute("ui.stylesheet", style.standardNode());
+                gsGraph.removeAttribute("ui.stylesheet");
+                gsGraph.addAttribute("ui.stylesheet", style.standardNode());
                 //graph.addAttribute("ui.stylesheet", "node { text-alignment: under; text-style: bold; text-color: white; text-background-mode: rounded-box; text-background-color: black; text-padding: 1px; text-offset: 0px, 2px; } ");
 
             }
