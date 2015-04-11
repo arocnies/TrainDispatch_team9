@@ -38,13 +38,18 @@ public class Graph {
      */
     public Path getPath(Node startNode, Node endNode, Edge excludedEdge) {
 
-        Path retPath = directPaths.get(startNode).get(endNode);
+        Path retPath;
 
-        // If direct path is not known.
-        if (retPath == null) {
+        // If already there...
+        if (startNode == endNode) {
             retPath = new Path(startNode);
+        }
+        else {
 
-            if (startNode != endNode) {
+            // If direct path is not known.
+            retPath = directPaths.get(startNode).get(endNode);
+            if (retPath == null) {
+
                 // Minimum distance from startNode to key node.
                 Map<Node, Path> minPaths = new HashMap<>(nodes.size());
                 for (Node n : nodes) {
