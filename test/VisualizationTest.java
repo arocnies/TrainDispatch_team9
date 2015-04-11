@@ -3,7 +3,6 @@ import graph.GraphFactory;
 import graph.Path;
 import org.graphstream.graph.*;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 import visualization.Styles;
 
@@ -11,85 +10,93 @@ import java.util.Set;
 
 public class VisualizationTest {
 
+    private static Graph gsGraph;
+    private static graph.Graph graph;
+    private static Styles style;
+
 	public static void main (String args []) {
-        Graph graph = new SingleGraph("TestInput");
-        Styles style = new Styles();
-        System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 
-        graph.Graph myGraph = GraphFactory.generateGraph("res/northern_rail_map.graph");
-        System.out.println(myGraph);
-
-        Set<graph.Node> nodes = myGraph.getNodes();
-
-        // Loop through nodes.
-        for (graph.Node node : nodes) {
-            graph.addNode(node.toString());
-        }
-
-        // Loop through nodes.
-        for (graph.Node node : nodes) {
-            Set<graph.Edge> edges = node.getEdges();
-
-            // Loop through edges.
-            for (graph.Edge edge : edges) {
-                try {
-                    // Can change getSharedId to toString for multidirectional
-                    graph.addEdge(edge.toString(), edge.getStart().toString(), edge.getEnd().toString(), false);
-                } catch (EdgeRejectedException | IdAlreadyInUseException e) {
-                    System.out.println("Ignoring duplicate edge:" + edge);
-                }
-            }
-        }
+        // Create graphs using provided args.
+        graph = GraphFactory.generateGraph(args[0]);
+        gsGraph = loadGsGraph(graph);
+        style = new Styles();
 
 		// Improve the output and initial labeling
-        graph.addAttribute("ui.quality");
-        graph.addAttribute("ui.antialias");
-        graph.addAttribute("ui.stylesheet", style.standardNode());
+        gsGraph.addAttribute("ui.quality");
+        gsGraph.addAttribute("ui.antialias");
+        gsGraph.addAttribute("ui.stylesheet", style.standardNode());
+        System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 
         // Displays the graph
-		graph.display();
+        gsGraph.display();
 
 		// Displays labels for all nodes.
-		for (Node n : graph) {
-			n.addAttribute("ui.label", n.getId());
-		}
+        gsGraph.getNodeSet().forEach(n -> n.addAttribute("ui.label", n.getId()));
 
-        // Test animation of all paths.
-        // This is a messy test of animating paths. Our true visualization should be broken up into proper methods.
+        // Display paths with one second interval.
+        displayAllPaths(1000);
+    }
 
+    // --------------- Other methods ---------------
+
+    public static void displayAllPaths(int interval) {
         // Loop through all nodes with an inner loop through all nodes.
-        for (graph.Node n1 : myGraph.getNodes()) {
-            for (graph.Node n2 : myGraph.getNodes()) {
+        for (graph.Node n1 : graph.getNodes()) {
+            for (graph.Node n2 : graph.getNodes()) {
 
                 // Create path between two nodes.
-                Path myPath = myGraph.getPath(n1, n2);
+                Path myPath = graph.getPath(n1, n2);
 
                 // Color path.
                 for (Edge edge : myPath) {
-                    graph.addAttribute("ui.stylesheet", "edge#\"" + edge.getSharedId()+ style.redEdge() );
-                     //"\"  { shadow-mode: plain; shadow-color: red; shadow-offset: 0; }");
-                    graph.addAttribute("ui.stylesheet", "node#\"" + edge.getEnd() + style.redNode() );
-                           //"\" { shadow-mode: plain; shadow-color: red; shadow-offset: 0; }");
+                    gsGraph.addAttribute("ui.stylesheet", "edge#\"" + edge.getSharedId() + style.redEdge() );
+                    gsGraph.addAttribute("ui.stylesheet", "node#\"" + edge.getEnd() + style.redNode() );
                 }
-                graph.addAttribute("ui.stylesheet", "node#\"" + n1 + style.startNode());
-                graph.addAttribute("ui.stylesheet", "node#\"" + n2 + style.endNode());
+                gsGraph.addAttribute("ui.stylesheet", "node#\"" + n1 + style.startNode());
+                gsGraph.addAttribute("ui.stylesheet", "node#\"" + n2 + style.endNode());
 
                 // Print path to console.
                 System.out.println(myPath);
 
                 // Sleep the thread one second.
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(interval);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
                 // Remove colors from graph.
-                graph.removeAttribute("ui.stylesheet");
-                graph.addAttribute("ui.stylesheet", style.standardNode());
-                //graph.addAttribute("ui.stylesheet", "node { text-alignment: under; text-style: bold; text-color: white; text-background-mode: rounded-box; text-background-color: black; text-padding: 1px; text-offset: 0px, 2px; } ");
-
+                gsGraph.removeAttribute("ui.stylesheet");
+                gsGraph.addAttribute("ui.stylesheet", style.standardNode());
             }
         }
+    }
+
+    public static Graph loadGsGraph(graph.Graph myGraph) {
+        Graph graph = new SingleGraph("TestInput");
+        System.out.println(myGraph);
+
+        Set<graph.Node> nodes = myGraph.getNodes();
+
+        // Add nodes to GraphStream graph.
+        for (graph.Node node : nodes) {
+            graph.addNode(node.toString());
+        }
+
+        // Add edges to GraphStream graph.
+        for (graph.Node node : nodes) {
+            Set<graph.Edge> edges = node.getEdges();
+
+            // Loop through edges.
+            for (graph.Edge edge : edges) {
+                try {
+                    // Must use getSharedId for single edged graphs.
+                    graph.addEdge(edge.getSharedId(), edge.getStart().toString(), edge.getEnd().toString(), false);
+                } catch (EdgeRejectedException | IdAlreadyInUseException e) {
+                    System.out.println("Ignoring duplicate edge:" + edge);
+                }
+            }
+        }
+        return graph;
     }
 }
