@@ -10,7 +10,7 @@ import graph.Node;
 public class GraphTest {
 
     public static void main(String[] args) {
-        Graph myGraph = GraphFactory.generateGraph("res/weight_test.graph");
+        Graph myGraph = GraphFactory.generateGraph("res/northern_rail_map.graph");
 
         System.out.println(myGraph);
 
