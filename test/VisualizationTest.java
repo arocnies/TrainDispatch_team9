@@ -1,6 +1,7 @@
 import graph.Edge;
 import graph.GraphFactory;
 import graph.Path;
+import graph.Node;
 import org.graphstream.graph.*;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
@@ -39,24 +40,46 @@ public class VisualizationTest {
 
     // --------------- Other methods ---------------
 
+    private static void paintPath(Node n1, Node n2) {
+        // Create path between two nodes.
+        Path myPath = graph.getPath(n1, n2);
+
+        // Color path.
+        for (Edge edge : myPath) {
+            gsGraph.addAttribute("ui.stylesheet", "edge#\"" + edge.getSharedId() + style.redEdge() );
+            gsGraph.addAttribute("ui.stylesheet", "node#\"" + edge.getEnd() + style.redNode() );
+        }
+        gsGraph.addAttribute("ui.stylesheet", "node#\"" + n1 + style.startNode());
+        gsGraph.addAttribute("ui.stylesheet", "node#\"" + n2 + style.endNode());
+
+        // Print path to console.
+        System.out.println(myPath);
+    }
+
+    public static void displayPath(String start, String end) {
+
+        Node startNode = null;
+        Node endNode = null;
+
+        // Find nodes from their names.
+        for (Node n : graph.getNodes()) {
+            if (n.toString().equals(start)) {
+                startNode = n;
+            }
+            if (n.toString().equals(end)) {
+                endNode = n;
+            }
+        }
+
+        paintPath(startNode, endNode);
+    }
+
     public static void displayAllPaths(int interval) {
         // Loop through all nodes with an inner loop through all nodes.
-        for (graph.Node n1 : graph.getNodes()) {
-            for (graph.Node n2 : graph.getNodes()) {
+        for (Node n1 : graph.getNodes()) {
+            for (Node n2 : graph.getNodes()) {
 
-                // Create path between two nodes.
-                Path myPath = graph.getPath(n1, n2);
-
-                // Color path.
-                for (Edge edge : myPath) {
-                    gsGraph.addAttribute("ui.stylesheet", "edge#\"" + edge.getSharedId() + style.redEdge() );
-                    gsGraph.addAttribute("ui.stylesheet", "node#\"" + edge.getEnd() + style.redNode() );
-                }
-                gsGraph.addAttribute("ui.stylesheet", "node#\"" + n1 + style.startNode());
-                gsGraph.addAttribute("ui.stylesheet", "node#\"" + n2 + style.endNode());
-
-                // Print path to console.
-                System.out.println(myPath);
+                paintPath(n1, n2);
 
                 // Sleep the thread one second.
                 try {
@@ -73,30 +96,30 @@ public class VisualizationTest {
     }
 
     public static Graph loadGsGraph(graph.Graph myGraph) {
-        Graph graph = new SingleGraph("TestInput");
+        Graph gsGraph = new SingleGraph("TestInput");
         System.out.println(myGraph);
 
-        Set<graph.Node> nodes = myGraph.getNodes();
+        Set<Node> nodes = myGraph.getNodes();
 
         // Add nodes to GraphStream graph.
-        for (graph.Node node : nodes) {
-            graph.addNode(node.toString());
+        for (Node node : nodes) {
+            gsGraph.addNode(node.toString());
         }
 
         // Add edges to GraphStream graph.
-        for (graph.Node node : nodes) {
-            Set<graph.Edge> edges = node.getEdges();
+        for (Node node : nodes) {
+            Set<Edge> edges = node.getEdges();
 
             // Loop through edges.
-            for (graph.Edge edge : edges) {
+            for (Edge edge : edges) {
                 try {
                     // Must use getSharedId for single edged graphs.
-                    graph.addEdge(edge.getSharedId(), edge.getStart().toString(), edge.getEnd().toString(), false);
+                    gsGraph.addEdge(edge.getSharedId(), edge.getStart().toString(), edge.getEnd().toString(), false);
                 } catch (EdgeRejectedException | IdAlreadyInUseException e) {
                     System.out.println("Ignoring duplicate edge:" + edge);
                 }
             }
         }
-        return graph;
+        return gsGraph;
     }
 }
