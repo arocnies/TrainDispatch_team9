@@ -21,14 +21,16 @@ public class Itinerary implements Route {
         totalCost += r.getCost();
     }
 
-    void addPath(Path path) {
+    int addPath(Path path) {
         addElement(path);
         paths.add(path);
+        return path.getCost();
     }
 
-    void addDelay(Delay delay) {
+    int addDelay(Delay delay) {
         addElement(delay);
         delays.add(delay);
+        return delay.getCost();
     }
 
     public List<Route> getElements() {

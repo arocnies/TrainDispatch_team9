@@ -18,6 +18,7 @@ public class Styles{
         String style;
         //System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 
+
         public String standardNode() {
 
              //  The standard node: BLACK background - WHITE text - BLACK node
@@ -33,8 +34,26 @@ public class Styles{
                     "text-offset: 10, 2; " +
                     "stroke-mode: plain; " +
                     "size: 15px; " +
-                    //"stroke-width: 1" +
                     "} ";
+        }
+
+        public String startNode() {
+
+                //  The starting node, filled with a vibrant green and larger
+
+                return style = "\" {" +
+                        "fill-color: green;" +
+                        "size: 20px; }";
+        }
+
+
+        public String endNode() {
+
+                // The end node, filled with a darker green and larger
+
+                return style = "\" {" +
+                        "fill-color: #006400;" +
+                        "size: 20px; }";
         }
 
 
@@ -51,18 +70,19 @@ public class Styles{
 
 
 
-        public String redNode(){
+        public String redNode() {
 
-            // A RED outlined node
+                // A RED outlined node
 
-            return style = //"node { " +
-                    "\"{ " +
-                    "shadow-mode: plain" +
-                    "shadow-color: red;" +
-                    "shadow-offset: 0;" +
-                    "shadow-width: 2" +
-                    "} ";
+                return style = //"node { " +
+                        "\" {" +
+                        "shadow-mode: plain;" +
+                        "shadow-color: red;" +
+                        "shadow-offset: 0;" +
+                        "shadow-width: 2; " +
+                        "}";
         }
+
 
 
         public String redEdge() {
@@ -70,74 +90,123 @@ public class Styles{
             // A RED outlined edge
 
             return style = //"edge { " +
-                    "\"{ " +
+                    "\" {" +
                     "shadow-mode: plain;" +
                     "shadow-color: red;" +
                     "shadow-offset: 0;" +
-                    "} ";
+                    "shadow-width: 2; }";
         }
+
 
 
         public String orangeNode() {
 
-            // A ORANGE outlined node
+            // An ORANGE outlined node
 
-            return style = " ";
+            return style = //"edge { " +
+                    "\" {" +
+                    "shadow-mode: plain;" +
+                    "shadow-color: orange;" +
+                    "shadow-offset: 0;" +
+                    "shadow-width: 2; }";
         }
+
 
 
         public String orangeEdge() {
 
-            // A ORANGE outlined edge
+            // An ORANGE outlined edge
 
-            return style = " ";
+            return style = //"edge { " +
+                    "\" {" +
+                    "shadow-mode: plain;" +
+                    "shadow-color: orange;" +
+                    "shadow-offset: 0;" +
+                    "shadow-width: 2; }";
         }
+
 
 
         public String yellowNode() {
 
             // A YELLOW outlined node
 
-            return style = " ";
+            return style = //"edge { " +
+                    "\" {" +
+                    "shadow-mode: plain;" +
+                    "shadow-color: yellow;" +
+                    "shadow-offset: 0;" +
+                    "shadow-width: 2; }";
         }
+
 
 
         public String yellowEdge() {
 
             // A YELLOW outlined edge
 
-            return style = " ";
+            return style = //"edge { " +
+                    "\" {" +
+                    "shadow-mode: plain;" +
+                    "shadow-color: yellow;" +
+                    "shadow-offset: 0;" +
+                    "shadow-width: 2; }";
         }
+
 
 
         public String blueNode() {
 
             // A BLUE outlined node
 
-            return style = " ";
+            return style = //"edge { " +
+                    "\" {" +
+                    "shadow-mode: plain;" +
+                    "shadow-color: blue;" +
+                    "shadow-offset: 0;" +
+                    "shadow-width: 2; }";
         }
+
 
 
         public String blueEdge() {
 
             // A BLUE outlined edge
 
-            return style = " ";
+            return style = //"edge { " +
+                    "\" {" +
+                    "shadow-mode: plain;" +
+                    "shadow-color: blue;" +
+                    "shadow-offset: 0;" +
+                    "shadow-width: 2; }";
         }
+
+
 
         public String greenNode() {
 
             // A GREEN outlined node
 
-            return style = " ";
+            return style = //"edge { " +
+                    "\" {" +
+                    "shadow-mode: plain;" +
+                    "shadow-color: green;" +
+                    "shadow-offset: 0;" +
+                    "shadow-width: 2; }";
         }
+
 
 
         public String greenEdge() {
 
             // A GREEN outlined edge
 
-            return style = " ";
+            return style = //"edge { " +
+                    "\" {" +
+                    "shadow-mode: plain;" +
+                    "shadow-color: green;" +
+                    "shadow-offset: 0;" +
+                    "shadow-width: 2; }";
         }
 /*
 // Trying to make it even more compact

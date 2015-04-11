@@ -53,6 +53,7 @@ public class Path implements Route, Comparable<Path>, Iterable<Edge> {
         return nodeList;
     }
 
+    @Override
     public List<Edge> getEdges() {
         return edges;
     }
@@ -74,5 +75,15 @@ public class Path implements Route, Comparable<Path>, Iterable<Edge> {
             sb.append(edge + " ");
         }
         return sb.toString();
+    }
+
+    public Path subPath(int start, int stepCount) {
+        List<Edge> myEdges = this.getEdges();
+        Path path = new Path(myEdges.get(start).getEnd());
+        for (int i = start + 1; i < start + stepCount && i < myEdges.size(); i++) {
+            path.addEdge(myEdges.get(i));
+        }
+
+        return path;
     }
 }

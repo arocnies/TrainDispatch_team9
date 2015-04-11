@@ -10,7 +10,7 @@ import graph.Node;
 public class GraphTest {
 
     public static void main(String[] args) {
-        Graph myGraph = GraphFactory.generateGraph("res/test.graph");
+        Graph myGraph = GraphFactory.generateGraph("res/weight_test.graph");
 
         System.out.println(myGraph);
 
@@ -26,7 +26,7 @@ public class GraphTest {
 
                 // Find match for edge.
                 for (Edge e2 : edge.getEnd().getEdges()) {
-                    if (e2.getEnd() == node) {
+                    if (e2.getEnd() == node && edge.getWeight() == e2.getWeight()) {
                         edgeUndirected = true;
                         break;
                     }
