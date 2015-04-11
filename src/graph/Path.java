@@ -20,7 +20,7 @@ public class Path implements Route, Comparable<Path>, Iterable<Edge> {
     }
 
     public Path(Path path) {
-        edges.addAll(path.getEdges());
+        path.getEdges().forEach(this::addEdge);
     }
 
     void addEdge(Edge edge) {
