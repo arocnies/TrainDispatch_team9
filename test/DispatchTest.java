@@ -1,8 +1,7 @@
-import dispatch.Dispatch;
-import dispatch.Plan;
-import dispatch.Schedule;
+import dispatch.*;
 import graph.Graph;
 import graph.GraphFactory;
+import visualization.DisplayGraph;
 
 /**
  * Created by Aaron on 4/11/2015.
@@ -11,12 +10,22 @@ import graph.GraphFactory;
 public class DispatchTest {
     public static void main(String[] args) {
 
-        Graph graph = GraphFactory.generateGraph("northern_rail_map.graph");
-        Schedule schedule = new Schedule(10, graph.getNodes(), 1000);
+        Graph graph = GraphFactory.generateGraph("res/northern_rail_map.graph");
+        Schedule schedule = new Schedule(30, graph.getNodes(), 100000);
         Dispatch dispatch = new Dispatch(graph, schedule.getDuration());
 
         Plan plan = dispatch.dispatchTrains(schedule);
+        DisplayGraph dg = new DisplayGraph(graph);
+        dg.display();
 
+        // Paint all the paths from all the trains.
+        for (Train t : plan.getTrains()) {
+            t.getItinerary().getPaths().forEach(p -> dg.paint(p, true));
+        }
 
+        // Paint delays.
+        for (Train t : plan.getTrains()) {
+            t.getItinerary().getDelays().forEach(dg::paint);
+        }
     }
 }

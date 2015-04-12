@@ -53,6 +53,10 @@ public class Path implements Route, Comparable<Path>, Iterable<Edge> {
         return nodeList;
     }
 
+    public Set<Node> getNodeSet() {
+        return nodes;
+    }
+
     @Override
     public List<Edge> getEdges() {
         return edges;

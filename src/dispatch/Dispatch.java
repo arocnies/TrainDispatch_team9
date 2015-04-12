@@ -13,18 +13,18 @@ import java.util.*;
 public class Dispatch {
 
     private final Graph graph;
-    private final int duration;
     private final Map<Edge, List<Boolean>> lock; // A map of edges to the next integer time the edge is free.
 
     public Dispatch(Graph graph, int duration) {
         this.graph = graph;
-        this.duration = duration;
         lock = new HashMap<>(graph.getEdges().size());
 
         // Fill lock map with zeros.
         for (Edge edge : graph.getEdges()) {
             ArrayList<Boolean> edgeLock = new ArrayList<>(duration);
-            Collections.fill(edgeLock, false);
+            for (int i = 0; i < duration; i++) {
+                edgeLock.add(false);
+            }
             lock.put(edge, edgeLock);
         }
     }
@@ -67,9 +67,13 @@ public class Dispatch {
                     Delay delay = new Delay(subPath.getLastEdge(), train, getWait(edge, time)); // Delay until after.
                     time += itin.addDelay(delay); // Add delay to itinerary.
                     path = graph.getPath(delay.getNode(), train.getEnd()); // Continue with new path.
-                    lockEdge(edge, time); // Lock edge for using it.
                 }
+                lockEdge(edge, time); // Lock edge for using it.
             }
+
+            // Done routing, save to train.
+            itin.addPath(path);
+            train.setItinerary(itin);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -109,7 +113,7 @@ public class Dispatch {
     private void prepLock(Edge edge, int time) {
         List<Boolean> edgeLock = lock.get(edge);
 
-        if (edgeLock.size() < time + edge.getWeight()) {
+        if (edge.getStart() != null && edgeLock.size() < time + edge.getWeight()) {
             for (int i = 0; i < edge.getWeight(); i++) {
                 edgeLock.add(false);
             }
