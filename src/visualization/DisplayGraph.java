@@ -21,6 +21,7 @@ public class DisplayGraph {
 
     private final Map<Node, Integer> nodeSizes;
     private final Map<Edge, Integer> edgeSizes;
+    private final Map<Edge, Integer> delaySizes;
 
     // For picking random colors.
     private String[] colors = {"purple", "aquamarine", "cyan", "magenta"};
@@ -31,9 +32,14 @@ public class DisplayGraph {
     public DisplayGraph(Graph graph) {
         nodeSizes= new HashMap<>(graph.getNodes().size());
         edgeSizes = new HashMap<>(graph.getEdges().size());
+        delaySizes = new HashMap<>(graph.getEdges().size());
         graph.getNodes().forEach(n -> nodeSizes.put(n, 10));
         graph.getEdges().forEach(n -> edgeSizes.put(n, 10));
+        graph.getEdges().forEach(n -> delaySizes.put(n, 10));
         fillGraph(graph);
+
+        graph.getNodes().stream().filter(n -> n != null).forEach(n -> paint(n, "grey"));
+        graph.getEdges().forEach(e -> paint(e, "grey"));
     }
 
     public void display() {
@@ -42,7 +48,7 @@ public class DisplayGraph {
         gsGraph.addAttribute("ui.antialias");
         gsGraph.addAttribute("ui.stylesheet", "node { " + Style.node() + "}");
         gsGraph.getNodeSet().forEach(n -> n.addAttribute("ui.label", n.getId()));
-        System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+        System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 
         gsGraph.display();
     }
@@ -63,17 +69,22 @@ public class DisplayGraph {
         final int size = nodeSizes.get(n) + 1;
         nodeSizes.put(n, size);
         gsGraph.addAttribute("ui.stylesheet", "node#" + n.toString() + " { " + Style.node(color, size) + " }");
+        gsGraph.getNode(n.toString()).addAttribute("layout.weight", size);
     }
 
     public void paint(Edge e, String color) {
-        gsGraph.addAttribute("ui.stylesheet", "edge#\"" + e.getSharedId() + "\" { " + Style.edge(color) + " }");
+        if (e.getStart() != null) {
+            final int size = edgeSizes.get(e) + 1;
+            gsGraph.addAttribute("ui.stylesheet", "edge#\"" + e.getSharedId() + "\" { " + Style.edge(color, size / 2) + " }");
+            gsGraph.getEdge(e.getSharedId()).addAttribute("layout.weight", e.getWeight() / 2);
+        }
     }
 
     public void paint(Delay d) {
         Edge e = d.getEdge();
-        int size = edgeSizes.get(e);
+        int size = delaySizes.get(e);
         size += d.getCost();
-        edgeSizes.put(e, size);
+        delaySizes.put(e, size);
         gsGraph.addAttribute("ui.stylesheet", "edge#\"" + e.getSharedId() + "\" { " + Style.edge("red", size / 2) + " }");
     }
 
