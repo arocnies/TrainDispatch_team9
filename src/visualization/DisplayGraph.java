@@ -55,7 +55,7 @@ public class DisplayGraph {
 
     public void paint(Path p, boolean isColored) {
 
-        String color = "yellow";
+        String color = "steelblue";
         if (isColored) {
             color = colors[rng.nextInt(colors.length)];
         }
@@ -74,7 +74,8 @@ public class DisplayGraph {
 
     public void paint(Edge e, String color) {
         if (e.getStart() != null) {
-            final int size = edgeSizes.get(e) + 1;
+            final int size = edgeSizes.get(e) + 2;
+            edgeSizes.put(e, size);
             gsGraph.addAttribute("ui.stylesheet", "edge#\"" + e.getSharedId() + "\" { " + Style.edge(color, size / 2) + " }");
             gsGraph.getEdge(e.getSharedId()).addAttribute("layout.weight", e.getWeight() / 2);
         }

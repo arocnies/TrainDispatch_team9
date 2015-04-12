@@ -24,7 +24,7 @@ public class DispatchTest {
 
         // Paint all the paths from all the trains.
         for (Train t : plan.getTrains()) {
-            t.getItinerary().getPaths().forEach(p -> dg.paint(p, true));
+            t.getItinerary().getPaths().forEach(p -> dg.paint(p, false));
         }
 
         // Paint delays.
