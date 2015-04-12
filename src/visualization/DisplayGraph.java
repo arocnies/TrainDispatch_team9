@@ -19,6 +19,7 @@ import java.util.Set;
 
 public class DisplayGraph {
 
+    private final Map<Node, Integer> nodeSizes;
     private final Map<Edge, Integer> edgeSizes;
 
     // For picking random colors.
@@ -28,7 +29,9 @@ public class DisplayGraph {
     private org.graphstream.graph.Graph gsGraph = new SingleGraph(this.toString(), true, true);
 
     public DisplayGraph(Graph graph) {
-        edgeSizes = new HashMap<>(graph.getNodes().size());
+        nodeSizes= new HashMap<>(graph.getNodes().size());
+        edgeSizes = new HashMap<>(graph.getEdges().size());
+        graph.getNodes().forEach(n -> nodeSizes.put(n, 10));
         graph.getEdges().forEach(n -> edgeSizes.put(n, 10));
         fillGraph(graph);
     }
@@ -52,10 +55,18 @@ public class DisplayGraph {
         }
         final String finalColor = color;
 
-        p.getNodeSet().stream().filter(n -> n != null).forEach(n ->
-            gsGraph.addAttribute("ui.stylesheet", "node#" + n.toString() + " { " + Style.node(finalColor) + " }"));
-        p.getEdges().forEach(
-                e -> gsGraph.addAttribute("ui.stylesheet", "edge#\"" + e.getSharedId() + "\" { " + Style.edge(finalColor) + " }"));
+        p.getNodeSet().stream().filter(n -> n != null).forEach(n -> paint(n, finalColor));
+        p.getEdges().forEach(e -> paint(e, finalColor));
+    }
+
+    public void paint(Node n, String color) {
+        final int size = nodeSizes.get(n) + 1;
+        nodeSizes.put(n, size);
+        gsGraph.addAttribute("ui.stylesheet", "node#" + n.toString() + " { " + Style.node(color, size) + " }");
+    }
+
+    public void paint(Edge e, String color) {
+        gsGraph.addAttribute("ui.stylesheet", "edge#\"" + e.getSharedId() + "\" { " + Style.edge(color) + " }");
     }
 
     public void paint(Delay d) {
@@ -92,7 +103,7 @@ class Style {
                     "text-padding: 2; " +
                     "text-offset: 10, 2; " +
                     "stroke-mode: plain; " +
-                    "size: 15px; ";
+                    "size: 10px; ";
 
     private static final String edge =
                     "fill-color: black; " +
