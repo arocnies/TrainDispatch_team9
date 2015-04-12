@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class DisplayGraph {
 
-    private final Map<Node, Integer> nodeSizes;
+    private final Map<Edge, Integer> edgeSizes;
 
     // For picking random colors.
     private String[] colors = {"purple", "aquamarine", "cyan", "magenta"};
@@ -28,8 +28,8 @@ public class DisplayGraph {
     private org.graphstream.graph.Graph gsGraph = new SingleGraph(this.toString(), true, true);
 
     public DisplayGraph(Graph graph) {
-        nodeSizes = new HashMap<>(graph.getNodes().size());
-        graph.getNodes().forEach(n -> nodeSizes.put(n, 10));
+        edgeSizes = new HashMap<>(graph.getNodes().size());
+        graph.getEdges().forEach(n -> edgeSizes.put(n, 10));
         fillGraph(graph);
     }
 
@@ -59,12 +59,10 @@ public class DisplayGraph {
     }
 
     public void paint(Delay d) {
-        Node n = d.getNode();
         Edge e = d.getEdge();
-        int size = nodeSizes.get(n);
+        int size = edgeSizes.get(e);
         size += d.getCost();
-        nodeSizes.put(n, size);
-        gsGraph.addAttribute("ui.stylesheet", "node#" + n.toString() + " { " + Style.node("red", size) + " }");
+        edgeSizes.put(e, size);
         gsGraph.addAttribute("ui.stylesheet", "edge#\"" + e.getSharedId() + "\" { " + Style.edge("red", size / 2) + " }");
     }
 
