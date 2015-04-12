@@ -1,8 +1,5 @@
 package dispatch;
 
-import graph.Graph;
-
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -11,13 +8,13 @@ import java.util.Set;
 
 public class Plan {
 
-    List<Train> trains;
+    Set<Train> trains;
 
-    public Plan(List<Train> listOfTrains) {
-        trains = listOfTrains;
+    public Plan(Schedule schedule) {
+        trains = schedule.getTrains();
     }
 
-    public List<Train> getTrains() {
+    public Set<Train> getTrains() {
         return trains;
     }
 
