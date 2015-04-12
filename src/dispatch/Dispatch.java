@@ -69,6 +69,7 @@ public class Dispatch {
                     path = graph.getPath(delay.getNode(), train.getEnd()); // Continue with new path.
                 }
                 lockEdge(edge, time); // Lock edge for using it.
+                stepCount++;
             }
 
             // Done routing, save to train.

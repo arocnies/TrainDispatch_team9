@@ -13,7 +13,7 @@ public class DispatchTest {
         Graph graph = GraphFactory.generateGraph("res/northern_rail_map.graph");
         System.out.println(graph);
 
-        Schedule schedule = new Schedule(30, graph.getNodes(), 100000);
+        Schedule schedule = new Schedule(30, graph.getNodes(), 1000);
         System.out.println(schedule);
 
         Dispatch dispatch = new Dispatch(graph, schedule.getDuration());

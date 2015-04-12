@@ -16,7 +16,7 @@ public class Delay implements Route {
     private final Train causeTrain;
     private final int cost;
 
-    public Delay(Edge edge, Train causeTrain, int cost) {
+    public Delay(Edge edge, Train causeTrain, int extra) {
         if (edge.getStart() != null) {
             this.node = edge.getStart();
         }
@@ -25,7 +25,7 @@ public class Delay implements Route {
         }
         this.edge = edge;
         this.causeTrain = causeTrain;
-        this.cost = cost;
+        this.cost = extra + edge.getWeight();
     }
 
     public Train getCause() {
