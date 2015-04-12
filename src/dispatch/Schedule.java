@@ -62,4 +62,16 @@ public class Schedule {
     public int getDuration() {
         return duration;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        for (Train t : getTrains()) {
+            sb.append(i + ": " + t.getStart() + " -> " + t.getEnd());
+            sb.append("\n");
+            i++;
+        }
+        return sb.toString();
+    }
 }

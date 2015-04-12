@@ -11,7 +11,11 @@ public class DispatchTest {
     public static void main(String[] args) {
 
         Graph graph = GraphFactory.generateGraph("res/northern_rail_map.graph");
+        System.out.println(graph);
+
         Schedule schedule = new Schedule(30, graph.getNodes(), 100000);
+        System.out.println(schedule);
+
         Dispatch dispatch = new Dispatch(graph, schedule.getDuration());
 
         Plan plan = dispatch.dispatchTrains(schedule);
