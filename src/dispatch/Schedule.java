@@ -27,6 +27,11 @@ public class Schedule {
     }
 
     private Train generateTrain() {
+        Node start = nextNode();
+        Node end = nextNode();
+        while (start == end) {
+            end = nextNode();
+        }
         return new Train(nextNode(), nextNode(), nextTime());
     }
 
