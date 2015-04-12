@@ -46,11 +46,8 @@ public class DisplayGraph {
         }
         final String finalColor = color;
 
-        for (Node n : p.getNodeSet()) {
-            if (n != null) {
-                gsGraph.addAttribute("ui.stylesheet", "node#" + n.toString() + " { " + Style.node(finalColor) + " }");
-            }
-        }
+        p.getNodeSet().stream().filter(n -> n != null).forEach(n ->
+            gsGraph.addAttribute("ui.stylesheet", "node#" + n.toString() + " { " + Style.node(finalColor) + " }"));
         p.getEdges().forEach(
                 e -> gsGraph.addAttribute("ui.stylesheet", "edge#\"" + e.getSharedId() + "\" { " + Style.edge(finalColor) + " }"));
     }
