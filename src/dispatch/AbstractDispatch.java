@@ -64,7 +64,7 @@ public abstract class AbstractDispatch {
         prepLock(edge, time);
         List<Boolean> edgeLock = lock.get(edge);
 
-        for (int i = time; i < edge.getWeight(); i++) {
+        for (int i = time; i < time + edge.getWeight(); i++) {
             if (edgeLock.get(i)) return true;
         }
         return false;
