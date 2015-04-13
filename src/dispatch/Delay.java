@@ -13,10 +13,10 @@ import java.util.List;
 public class Delay implements Route {
     private final Node node;
     private final Edge edge;
-    private final Train causeTrain;
+    private final Train affectedTrain;
     private final int cost;
 
-    public Delay(Edge edge, Train causeTrain, int extra) {
+    public Delay(Edge edge, Train affectedTrain, int extra) {
         if (edge.getStart() != null) {
             this.node = edge.getStart();
         }
@@ -24,12 +24,12 @@ public class Delay implements Route {
             this.node = edge.getEnd();
         }
         this.edge = edge;
-        this.causeTrain = causeTrain;
+        this.affectedTrain = affectedTrain;
         this.cost = extra + edge.getWeight();
     }
 
-    public Train getCause() {
-        return causeTrain;
+    public Train getAffectedTrain() {
+        return affectedTrain;
     }
 
     public int getCost() {

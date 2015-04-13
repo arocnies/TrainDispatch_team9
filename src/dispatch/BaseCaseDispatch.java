@@ -5,35 +5,21 @@ import graph.Graph;
 import graph.Path;
 
 /**
- * Created by Aaron on 3/27/2015.
+ * Created by Aaron on 4/12/2015.
  */
 
-public class Dispatch extends AbstractDispatch {
+public class BaseCaseDispatch extends AbstractDispatch {
 
-    public Dispatch(Graph graph, int duration) {
+    public BaseCaseDispatch(Graph graph, int duration) {
         super(graph, duration);
     }
 
-    // Routes a single train.
     @Override
     protected void routeTrain(Train train) {
-
-        // Start building Itinerary.
-        // Start tracking simulated time.
-
-        // Start building path.
-        // Loop through each edge.
-            // If locked at time.
-                // Split path. Add to Itinerary.
-                // Delay until after. Add to Itinerary.
-                // Start building new path.
-            // Increment lock on edge.
-
-        // ---------------------------------------
-
         Itinerary itin = new Itinerary(); // Start building Itinerary.
         int time = train.getDepartureTime(); // Start tracking simulated time.
         Path path = graph.getPath(train.getStart(), train.getEnd()); // Start building path.
+
 
         int stepCount = 1;
         for (Edge edge : path.getEdges()) {
@@ -44,12 +30,14 @@ public class Dispatch extends AbstractDispatch {
                 time += itin.addDelay(delay); // Add delay to itinerary.
                 path = graph.getPath(delay.getNode(), train.getEnd()); // Continue with new path.
             }
-            lockEdge(edge, time, time + edge.getWeight()); // Lock edge for using it.
+
+            // lock all edges in itinerary until for this edge.
             stepCount++;
         }
-
-        // Done routing, save to train.
-        itin.addPath(path);
+        time += itin.addPath(path);
         train.setItinerary(itin);
+
+        final int finalTime = time;
+        itin.getEdges().forEach(e -> lockEdge(e, train.getDepartureTime(), finalTime));
     }
 }

@@ -32,7 +32,7 @@ public class Schedule {
         while (start == end) {
             end = nextNode();
         }
-        return new Train(nextNode(), nextNode(), nextTime());
+        return new Train(start, end, nextTime());
     }
 
     private int nextTime() {
@@ -66,11 +66,9 @@ public class Schedule {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        int i = 0;
         for (Train t : getTrains()) {
-            sb.append(i + ": " + t.getStart() + " -> " + t.getEnd());
+            sb.append(t.getDepartureTime() + ": " + t.getStart() + " -> " + t.getEnd());
             sb.append("\n");
-            i++;
         }
         return sb.toString();
     }
