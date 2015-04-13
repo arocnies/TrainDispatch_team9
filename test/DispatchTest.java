@@ -31,5 +31,7 @@ public class DispatchTest {
         for (Train t : plan.getTrains()) {
             t.getItinerary().getDelays().forEach(dg::paint);
         }
+
+        System.out.println(plan.getAverageDelay());
     }
 }
