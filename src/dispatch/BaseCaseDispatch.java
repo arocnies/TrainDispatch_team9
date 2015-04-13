@@ -16,28 +16,42 @@ public class BaseCaseDispatch extends AbstractDispatch {
 
     @Override
     protected void routeTrain(Train train) {
+
+        // Start building Itinerary.
+        // Start tracking simulated time.
+
+        // Start building path.
+        // If time through path cost is locked.
+            // increment time to next free time.
+        // If time was incremented, add delay.
+        // Lock all edges.
+
+        // ---------------------------------------
+
         Itinerary itin = new Itinerary(); // Start building Itinerary.
         int time = train.getDepartureTime(); // Start tracking simulated time.
-        Path path = graph.getPath(train.getStart(), train.getEnd()); // Start building path.
+        final Path path = graph.getPath(train.getStart(), train.getEnd()); // Start building path.
 
-
-        int stepCount = 1;
-        for (Edge edge : path.getEdges()) {
-            if (isLocked(edge, time)) { // If locked at time.
-                Path subPath = path.subPath(0, stepCount); // Split path.
-                time += itin.addPath(subPath); // Add path to itinerary.
-                Delay delay = new Delay(subPath.getLastEdge(), train, getWait(edge, time)); // Delay until after.
-                time += itin.addDelay(delay); // Add delay to itinerary.
-                path = graph.getPath(delay.getNode(), train.getEnd()); // Continue with new path.
-            }
-
-            // lock all edges in itinerary until for this edge.
-            stepCount++;
+        while (isLocked(path, time, time + path.getCost())) {
+            time++;
         }
-        time += itin.addPath(path);
-        train.setItinerary(itin);
-
+        if (time != train.getDepartureTime()) {
+            Delay delay = new Delay(path.getEdges().get(1), train, time - train.getDepartureTime());
+            itin.addDelay(delay);
+        }
+        itin.addPath(path);
         final int finalTime = time;
-        itin.getEdges().forEach(e -> lockEdge(e, train.getDepartureTime(), finalTime));
+        itin.getEdges().forEach(e -> lockEdge(e, finalTime, finalTime + path.getCost()));
+
+        train.setItinerary(itin);
+    }
+
+    protected boolean isLocked(Path path, int start, int end) {
+        for (Edge edge : path.getEdges()) {
+            if (isLocked(edge, start, end)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

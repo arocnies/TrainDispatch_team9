@@ -62,10 +62,17 @@ public abstract class AbstractDispatch {
 
     protected boolean isLocked(Edge edge, int time) {
         prepLock(edge, time);
-        List<Boolean> edgeLock = lock.get(edge);
+        return isLocked(edge, time, time + edge.getWeight());
+    }
 
-        for (int i = time; i < time + edge.getWeight(); i++) {
-            if (edgeLock.get(i)) return true;
+    protected boolean isLocked(Edge edge, int start, int end) {
+        if (edge.getStart() != null) {
+            prepLock(edge, end);
+            List<Boolean> edgeLock = lock.get(edge);
+
+            for (int i = start; i < end; i++) {
+                if (edgeLock.get(i)) return true;
+            }
         }
         return false;
     }

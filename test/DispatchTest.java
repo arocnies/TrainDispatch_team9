@@ -16,7 +16,7 @@ public class DispatchTest {
         Schedule schedule = new Schedule(30, graph.getNodes(), 1);
         System.out.println(schedule);
 
-        AbstractDispatch dispatch = new Dispatch(graph, schedule.getDuration());
+        AbstractDispatch dispatch = new BaseCaseDispatch(graph, schedule.getDuration());
 
         Plan plan = dispatch.dispatchTrains(schedule);
         DisplayGraph dg = new DisplayGraph(graph);
