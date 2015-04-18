@@ -1,6 +1,6 @@
 package graph;
 
-import dispatch.Route;
+import dispatch.Routable;
 
 import java.util.*;
 
@@ -8,7 +8,7 @@ import java.util.*;
  * Created by Aaron on 3/27/2015.
  */
 
-public class Path implements Route, Comparable<Path>, Iterable<Edge> {
+public class Path implements Routable, Comparable<Path>, Iterable<Edge> {
 
     private final List<Edge> edges = new ArrayList<>();
     private final Set<Node> nodes = new HashSet<>();

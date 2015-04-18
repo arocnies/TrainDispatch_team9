@@ -10,13 +10,13 @@ import java.util.*;
  * Created by aaron on 4/4/15.
  */
 
-public class Itinerary implements Route {
-    private final List<Route> elements = new LinkedList<>();
+public class Itinerary implements Routable {
+    private final List<Routable> elements = new LinkedList<>();
     private final List<Path> paths= new LinkedList<>();
     private final List<Delay> delays = new LinkedList<>();
     private int totalCost;
 
-    private void addElement(Route r) {
+    private void addElement(Routable r) {
         elements.add(r);
         totalCost += r.getCost();
     }
@@ -33,7 +33,7 @@ public class Itinerary implements Route {
         return delay.getCost();
     }
 
-    public List<Route> getElements() {
+    public List<Routable> getElements() {
         return elements;
     }
 
@@ -54,7 +54,7 @@ public class Itinerary implements Route {
     public List<Node> getNodes() {
         Set<Node> nodes = new HashSet<>();
 
-        for (Route r : paths) {
+        for (Routable r : paths) {
             nodes.addAll(r.getNodes());
         }
 
@@ -64,7 +64,7 @@ public class Itinerary implements Route {
     @Override
     public List<Edge> getEdges() {
         Set<Edge> edges = new HashSet<>();
-        for (Route r : getPaths()) {
+        for (Routable r : getPaths()) {
             edges.addAll(r.getEdges());
         }
         return new ArrayList<>(edges);

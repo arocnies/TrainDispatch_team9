@@ -2,6 +2,7 @@ package dispatch;
 
 import graph.Edge;
 import graph.Graph;
+import graph.Path;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import java.util.Map;
 public abstract class AbstractDispatch {
     protected final Graph graph;
     protected final Map<Edge, List<Boolean>> lock; // A map of edges to the next integer time the edge is free.
+    //TODO: Refactor with objected based locking.
 
     public AbstractDispatch(Graph graph, int duration) {
         this.graph = graph;
@@ -33,13 +35,13 @@ public abstract class AbstractDispatch {
     // Main method called to route the trains and return a plan.
     public Plan dispatchTrains(Schedule schedule) {
 
-        // Route all trains.
+        // Routable all trains.
         schedule.getTrains().forEach(this::routeTrain);
         return new Plan(schedule);
     }
 
     // Routes a single train.
-    protected abstract void  routeTrain(Train train);
+    protected abstract void routeTrain(Train train);
 
     protected int getWait(Edge edge, int time) {
         int wait = 0;
@@ -83,6 +85,27 @@ public abstract class AbstractDispatch {
 
         while (edge.getStart() != null && edgeLock.size() < time + edge.getWeight()) {
             edgeLock.add(false);
+        }
+    }
+
+    protected void unlock(Train train) {
+        Itinerary itin = train.getItinerary();
+        int time = train.getDepartureTime();
+
+        for (Routable r : itin.getElements()) {
+            if (r instanceof Path) { // Ugh... This should be redesigned with object structured locking.
+                for (Edge edge : r.getEdges()) {
+                    List<Boolean> edgeLock = lock.get(edge);
+                    for (int i = time; i < time + edge.getWeight(); i++) {
+                        prepLock(edge, i);
+                        edgeLock.set(i, false);
+                    }
+                    time += edge.getWeight();
+                }
+            }
+            else if (r instanceof Delay){ // Else it is a delay.
+                time += r.getCost();
+            }
         }
     }
 }

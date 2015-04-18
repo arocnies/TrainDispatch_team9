@@ -33,7 +33,7 @@ public class Graph {
      * Returns a Path object leading from startNode to endNode found using Dijkstra's algorithm.
      * @param startNode The node of origin.
      * @param endNode The final destination node.
-     * @param excludedEdge An edge to exlude from the calculation.
+     * @param excludedEdge An edge to exclude from the calculation.
      * @return Path
      */
     public Path getPath(Node startNode, Node endNode, Edge excludedEdge) {
@@ -70,8 +70,8 @@ public class Graph {
                     // Look at each edge of the current node.
                     for (Edge edge : lastNode.getEdges()) {
 
-                        // If not excluded edge.
-                        if (edge != excludedEdge) {
+                        // If not excluded edge and it isn't the only edge.
+                        if (edge != excludedEdge || lastNode.getEdges().size() > 1) {
                             Node nextNode = edge.getEnd();
 
                             // If nextNode is not the last node.

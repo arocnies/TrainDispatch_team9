@@ -36,7 +36,7 @@ public class BaseCaseDispatch extends AbstractDispatch {
             time++;
         }
         if (time != train.getDepartureTime()) {
-            Delay delay = new Delay(path.getEdges().get(1), train, time - train.getDepartureTime());
+            Delay delay = new Delay(path.getEdges().get(1), train, time - train.getDepartureTime(), time);
             itin.addDelay(delay);
         }
         itin.addPath(path);

@@ -36,7 +36,7 @@ public class Train {
 
     public int getDelay() {
         int delay = 0;
-        for (Route r : itinerary.getElements()) {
+        for (Routable r : itinerary.getElements()) {
             delay += r.getCost();
         }
         return delay;

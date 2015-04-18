@@ -10,13 +10,14 @@ import java.util.List;
  * Created by aaron on 4/4/15.
  */
 
-public class Delay implements Route {
+public class Delay implements Routable {
     private final Node node;
     private final Edge edge;
     private final Train affectedTrain;
     private final int cost;
+    private final int time;
 
-    public Delay(Edge edge, Train affectedTrain, int extra) {
+    public Delay(Edge edge, Train affectedTrain, int cost, int time) {
         if (edge.getStart() != null) {
             this.node = edge.getStart();
         }
@@ -25,7 +26,8 @@ public class Delay implements Route {
         }
         this.edge = edge;
         this.affectedTrain = affectedTrain;
-        this.cost = extra + edge.getWeight();
+        this.cost = cost + edge.getWeight();
+        this.time = time;
     }
 
     public Train getAffectedTrain() {
@@ -52,5 +54,9 @@ public class Delay implements Route {
     @Override
     public List<Node> getNodes() {
         return Collections.singletonList(node);
+    }
+
+    public int getTime() {
+        return time;
     }
 }

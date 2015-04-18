@@ -9,7 +9,7 @@ import java.util.List;
  * Created by aaron on 4/5/15.
  */
 
-public interface Route {
+public interface Routable {
 
     int getCost();
 
