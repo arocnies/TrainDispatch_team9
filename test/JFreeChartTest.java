@@ -1,5 +1,4 @@
 /**
- * Package : PACKAGE_NAME
  * Created by J. Nguy on 4/18/2015.
  */
 import dispatch.AbstractDispatch;
