@@ -11,6 +11,7 @@ public class Graph {
     private final Set<Node> nodes;
     private final Set<Edge> edges;
     private final Map<Node, Map<Node, Path>> directPaths; // A map from each node to it's minimum paths.
+    private EdgeComparator ec = new EdgeComparator();
 
     /**
      * Constructor for new graph using the provided nodes.
