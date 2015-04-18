@@ -1,9 +1,9 @@
+import analysis.Initialization;
 import graph.Graph;
 import graph.GraphFactory;
 import org.jfree.ui.RefineryUtilities;
 
 /**
- * Package : PACKAGE_NAME
  * Created by J. Nguy on 4/18/2015.
  */
 public class ChartTest{
@@ -16,7 +16,8 @@ public class ChartTest{
         long start = System.currentTimeMillis();
 
 
-        JFreeChartTest chart = new JFreeChartTest("Analysis", title, graph, tests);
+        // Create and display the graph
+        Initialization chart = new Initialization("Analysis", title, graph, tests);
         chart.pack( );
         RefineryUtilities.centerFrameOnScreen(chart);
         chart.setVisible(true);

@@ -40,11 +40,17 @@ public class JFreeChartTest extends ApplicationFrame
                 true, true, false);
 
         ChartPanel chartPanel = new ChartPanel( xylineChart );
-        chartPanel.setPreferredSize( new java.awt.Dimension( 1000 , 700 ) );
+        chartPanel.setPreferredSize( new java.awt.Dimension( 1200 , 700 ) );
         final XYPlot plot = xylineChart.getXYPlot( );
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
+
+        // Sets the series to color RED
         renderer.setSeriesPaint(0, Color.RED);
 
+        //  Removes the boxes for the data points
+        renderer.setSeriesShapesVisible(0, false);
+
+        // Thickness of the lines rendered
         renderer.setSeriesStroke( 0 , new BasicStroke( 1.0f ) );
 
         plot.setRenderer( renderer );
