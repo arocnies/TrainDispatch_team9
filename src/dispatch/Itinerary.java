@@ -10,7 +10,8 @@ import java.util.*;
  * Created by aaron on 4/4/15.
  */
 
-public class Itinerary implements Routable {
+public class Itinerary implements Routable, Comparable<Routable> {
+
     private final List<Routable> elements = new LinkedList<>();
     private final List<Path> paths= new LinkedList<>();
     private final List<Delay> delays = new LinkedList<>();
@@ -68,5 +69,10 @@ public class Itinerary implements Routable {
             edges.addAll(r.getEdges());
         }
         return new ArrayList<>(edges);
+    }
+
+    @Override
+    public int compareTo(Routable o) {
+        return this.getCost() - o.getCost();
     }
 }

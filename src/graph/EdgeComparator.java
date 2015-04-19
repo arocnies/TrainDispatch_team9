@@ -1,5 +1,7 @@
 package graph;
 
+import dispatch.Dispatch;
+
 import java.util.Comparator;
 
 /**
@@ -7,8 +9,19 @@ import java.util.Comparator;
  */
 
 
-// TODO: Use this to compare edge values instead of just weight. In Dispatch, have the optimized Dispatch pass a EdgeComparator that uses the getWait() from dispatch to consider the trains and delays when finding the path.
+/*
+TODO:
+Use this to compare edge values instead of just weight for different optimizations.
+In Dispatch, have the optimized Dispatch pass a EdgeComparator that uses the getWait()
+from dispatch to consider the trains and delays when finding the path.
+ */
 public class EdgeComparator implements Comparator<Edge>{
+    private final Dispatch dispatch;
+
+    public EdgeComparator(Dispatch dispatch) {
+        this.dispatch = dispatch;
+    }
+
     @Override
     public int compare(Edge e1, Edge e2) {
         return e1.getWeight() - e2.getWeight();

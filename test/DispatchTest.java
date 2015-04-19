@@ -18,7 +18,7 @@ public class DispatchTest {
 
 
         // Change this line for different Dispatches.
-        AbstractDispatch dispatch = new OptimizedDispatch(graph, schedule.getDuration());
+        Dispatch dispatch = new OptimizedDispatch(graph, schedule.getDuration());
 
         Plan plan = dispatch.dispatchTrains(schedule);
         DisplayGraph dg = new DisplayGraph(graph);

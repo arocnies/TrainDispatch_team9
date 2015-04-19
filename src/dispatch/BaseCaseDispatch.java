@@ -8,7 +8,7 @@ import graph.Path;
  * Created by Aaron on 4/12/2015.
  */
 
-public class BaseCaseDispatch extends AbstractDispatch {
+public class BaseCaseDispatch extends Dispatch {
 
     public BaseCaseDispatch(Graph graph, int duration) {
         super(graph, duration);

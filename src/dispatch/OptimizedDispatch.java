@@ -1,9 +1,6 @@
 package dispatch;
 
-import graph.Edge;
-import graph.Graph;
-import graph.Path;
-import javafx.collections.transformation.SortedList;
+import graph.*;
 
 import java.util.*;
 
@@ -30,7 +27,8 @@ public class OptimizedDispatch extends Dispatch {
 
         delays.sort(new DelayCostComparator());
 
-        plan.getTrains().forEach(this::unlock);
+//        // Unlock delays and reroute.
+//        plan.getTrains().forEach(this::unlock);
 //        for (Delay d : delays) {
 //            routeTrain(d.getAffectedTrain());
 //        }
@@ -40,7 +38,7 @@ public class OptimizedDispatch extends Dispatch {
             Itinerary raw = train.getItinerary();
             unlock(train);
 //            routeTrain(train);
-            routeTrain(train, d.getEdge());
+//            routeTrain(train, d.getEdge());
             if (train.getItinerary().getCost() > raw.getCost()) {
                 System.out.print("IT'S WORSE! Rerouting\n");
                 unlock(train);
@@ -51,10 +49,30 @@ public class OptimizedDispatch extends Dispatch {
         System.out.println("\nRAW = " + rawDelay + " Optimized = " + plan.getAverageDelay() + "\n");
         return plan;
     }
+
+    private Itinerary findOptimalRoute(Train train, Comparator<? extends Edge> comparator) {
+
+        // Setup.
+        Itinerary optimizedItin = new Itinerary();
+        Node startNode = train.getStart();
+        Node endNode = train.getEnd();
+        Path path = new Path(startNode);
+
+        // Minimum distance from startNode to key node.
+        Map<Node, Path> minPaths = new HashMap<>(graph.getNodes().size());
+        for (Node n : graph.getNodes()) {
+            minPaths.put(n, new Path(startNode));
+        }
+
+        // Priority queue by weight.
+        PriorityQueue<Edge> priorityQueue = new PriorityQueue<>();
+
+        return optimizedItin;
+    }
 }
 
 
-
+// Class for prioritizing delays.
 class DelayCostComparator implements Comparator<Delay> {
 
     @Override
