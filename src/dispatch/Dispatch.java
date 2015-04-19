@@ -17,17 +17,29 @@ import java.util.Map;
 public class Dispatch {
     protected final Graph graph;
     protected final Map<Edge, List<Boolean>> lock; // A map of edges to the next integer time the edge is free.
+    protected int time = 0;
     //TODO: Refactor with objected based locking.
 
     public Dispatch(Graph graph, int duration) {
         this.graph = graph;
         lock = new HashMap<>(graph.getEdges().size());
 
-        // Fill lock map with zeros.
+        // Fill lock map with false (not locked).
         for (Edge edge : graph.getEdges()) {
             ArrayList<Boolean> edgeLock = new ArrayList<>(duration);
             for (int i = 0; i < duration; i++) {
                 edgeLock.add(false);
+            }
+            lock.put(edge, edgeLock);
+        }
+    }
+
+    protected void unlockAll() {
+        // Fill lock map with zeros.
+        for (Edge edge : graph.getEdges()) {
+            List<Boolean> edgeLock = lock.get(edge);
+            for (int i = 0; i < edgeLock.size(); i++) {
+                edgeLock.set(i, false);
             }
             lock.put(edge, edgeLock);
         }
@@ -43,11 +55,11 @@ public class Dispatch {
 
     // Routes a single train.
     protected void routeTrain(Train train) {
-        train.setItinerary(getItinerary(train));
+        train.setItinerary(getItinerary(train, null));
     }
 
     // Returns Itinerary from one Node to another.
-    protected Itinerary getItinerary(Train train) {
+    protected Itinerary getItinerary(Train train, Edge ignoredEdge) {
 
         // Start building Itinerary.
         // Start tracking simulated time.
@@ -62,18 +74,18 @@ public class Dispatch {
         // Setup.
         Node start = train.getStart();
         Node end = train.getEnd();
-        int time = train.getDepartureTime();
+        time = train.getDepartureTime();
         Itinerary itin = new Itinerary(); // Start building Itinerary.
-        Path path = graph.getPath(start, end); // Start building path.
+        Path path = graph.getPath(start, end, ignoredEdge); // Start building path.
 
         int stepCount = 1;
         for (Edge edge : path.getEdges()) {
             if (isLocked(edge, time)) { // If locked at time.
                 Path subPath = path.subPath(0, stepCount); // Split path.
-                time += itin.addPath(subPath); // Add path to itinerary.
+                addTime(itin.addPath(subPath)); // Add path to itinerary.
                 Delay delay = new Delay(subPath.getLastEdge(), train, getWait(edge, time), time); // Delay until after.
-                time += itin.addDelay(delay); // Add delay to itinerary.
-                path = graph.getPath(delay.getNode(), end); // Continue with new path.
+                addTime(itin.addDelay(delay)); // Add delay to itinerary.
+                path = graph.getPath(delay.getNode(), end, ignoredEdge); // Continue with new path.
             }
             lockEdge(edge, time, time + edge.getWeight()); // Lock edge for using it.
             stepCount++;
@@ -81,6 +93,10 @@ public class Dispatch {
 
         itin.addPath(path);
         return itin;
+    }
+
+    protected void addTime(int t) {
+        time += t;
     }
 
     protected int getWait(Edge edge, int time) {
@@ -133,7 +149,7 @@ public class Dispatch {
         int time = train.getDepartureTime();
 
         for (Routable r : itin.getElements()) {
-            if (r instanceof Path) { // Ugh... This should be redesigned with object structured locking.
+            if (r instanceof Path) { // TODO: Ugh... This should be redesigned with object-structured locking.
                 for (Edge edge : r.getEdges()) {
                     List<Boolean> edgeLock = lock.get(edge);
                     for (int i = time; i < time + edge.getWeight(); i++) {

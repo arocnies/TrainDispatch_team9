@@ -9,44 +9,56 @@ import java.util.*;
  */
 
 public class OptimizedDispatch extends Dispatch {
+    private WaitingEdgeComparator wec = new WaitingEdgeComparator(this);
 
     public OptimizedDispatch(Graph graph, int duration) {
         super(graph, duration);
     }
 
     @Override
+    public void addTime(int t) {
+        super.addTime(t);
+        wec.setTime(time);
+    }
+
+    @Override
+    protected void routeTrain(Train train) {
+        routeTrain(train, null);
+    }
+
+    protected void routeTrain(Train train, Edge edge) {
+        train.setItinerary(getItinerary(train, edge));
+    }
+
+    @Override
     public Plan dispatchTrains (Schedule schedule) {
+
+        // Setup raw plan.
         Plan plan = super.dispatchTrains(schedule);
         double rawDelay = plan.getAverageDelay();
 
         // Build delay queue.
         List<Delay> delays = new LinkedList<>();
+
         for (Train t : plan.getTrains()) {
             t.getItinerary().getDelays().forEach(delays::add);
         }
 
-        delays.sort(new DelayCostComparator());
-
-//        // Unlock delays and reroute.
-//        plan.getTrains().forEach(this::unlock);
-//        for (Delay d : delays) {
-//            routeTrain(d.getAffectedTrain());
+        // Prioritize delays based on comparator.
+        delays.sort(new DelayComparator());
+        delays.forEach(d -> unlock(d.getAffectedTrain()));
+//        for (int i = 0; i < 3; i++) {
+//            unlock(delays.get(i).getAffectedTrain());
 //        }
 
-        for (Delay d : delays) {
-            Train train = d.getAffectedTrain();
-            Itinerary raw = train.getItinerary();
-            unlock(train);
-//            routeTrain(train);
-//            routeTrain(train, d.getEdge());
-            if (train.getItinerary().getCost() > raw.getCost()) {
-                System.out.print("IT'S WORSE! Rerouting\n");
-                unlock(train);
-                routeTrain(train);
-            }
-        }
+        // Unlock routes for all Trains that have delays.
+//        unlockAll();
+//        plan.getTrains().forEach(this::unlock);
 
-        System.out.println("\nRAW = " + rawDelay + " Optimized = " + plan.getAverageDelay() + "\n");
+        // Set edge comparator to account for routed trains.
+        graph.setEdgeComparator(new WaitingEdgeComparator(this));
+
+        delays.forEach(d -> routeTrain(d.getAffectedTrain()));
         return plan;
     }
 
@@ -73,10 +85,30 @@ public class OptimizedDispatch extends Dispatch {
 
 
 // Class for prioritizing delays.
-class DelayCostComparator implements Comparator<Delay> {
+class DelayComparator implements Comparator<Delay> {
 
     @Override
     public int compare(Delay o1, Delay o2) {
-        return o1.getCost() - o2.getCost();
+        return o1.getTime() - o2.getTime();
+    }
+}
+
+//
+class WaitingEdgeComparator implements Comparator<Edge> {
+
+    private final Dispatch dispatch;
+    private int time = 0;
+
+    public WaitingEdgeComparator(Dispatch dispatch) {
+        this.dispatch = dispatch;
+    }
+
+    void setTime(int t) {
+        time = t;
+    }
+
+    @Override
+    public int compare(Edge e1, Edge e2) {
+        return (e2.getWeight() + dispatch.getWait(e2, time)) - (e1.getWeight() + dispatch.getWait(e1, time));
     }
 }

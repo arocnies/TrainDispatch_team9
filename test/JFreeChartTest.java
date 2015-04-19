@@ -28,11 +28,12 @@ public class JFreeChartTest extends ApplicationFrame
 {
     public JFreeChartTest( String applicationTitle, String chartTitle, Graph m, int n )
     {
-        super(applicationTitle);
 
+        // Setup.
+        super(applicationTitle);
         JFreeChart xylineChart = ChartFactory.createXYLineChart(
                 chartTitle,
-                "Trial",
+                "Trains",
                 "Delay",
                 createDataset( m , n ),
                 PlotOrientation.VERTICAL,
@@ -40,8 +41,8 @@ public class JFreeChartTest extends ApplicationFrame
 
         ChartPanel chartPanel = new ChartPanel( xylineChart );
         chartPanel.setPreferredSize( new java.awt.Dimension( 1200 , 700 ) );
-        final XYPlot plot = xylineChart.getXYPlot( );
-        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
+        final XYPlot plot = xylineChart.getXYPlot();
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 
         // Sets the series to color RED
         renderer.setSeriesPaint(0, Color.RED);
@@ -56,25 +57,26 @@ public class JFreeChartTest extends ApplicationFrame
         setContentPane( chartPanel );
     }
 
-    private XYDataset createDataset( Graph m , int n)
+    private XYDataset createDataset( Graph m , int trials)
     {
-        final XYSeries inputData = new XYSeries( "Trials" );
-        double totalAvrDelay = 0;
+        final XYSeries inputData = new XYSeries( "Trains" );
 
-        for (int i = n; i > 0; i--) {
-            Schedule schedule = new Schedule(100, m.getNodes(), 1000);
-            Dispatch dispatch = new Dispatch(m, schedule.getDuration());
-            Plan plan = dispatch.dispatchTrains(schedule);
+        for (int i = 0; i <= 1000; i += 50) {
 
-            inputData.add( i , plan.getAverageDelay());
-            totalAvrDelay += plan.getAverageDelay();
+            double totalAvrDelay = 0;
+            for (int j = trials; j > 0; j--) {
+                Schedule schedule = new Schedule(i, m.getNodes(), 1000);
+                Dispatch dispatch = new Dispatch(m, schedule.getDuration());
+                Plan plan = dispatch.dispatchTrains(schedule);
+
+                totalAvrDelay += plan.getAverageDelay();
+            }
+            inputData.add(i, totalAvrDelay / trials);
         }
 
 
         final XYSeriesCollection dataset = new XYSeriesCollection( );
         dataset.addSeries( inputData);
-
-        System.out.println("Average delay = " + totalAvrDelay / n);
 
         return dataset;
     }
