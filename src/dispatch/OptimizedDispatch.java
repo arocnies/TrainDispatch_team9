@@ -32,55 +32,77 @@ public class OptimizedDispatch extends Dispatch {
 
     @Override
     public Plan dispatchTrains (Schedule schedule) {
-
-        // Setup raw plan.
+        graph.setEdgeComparator(new WaitingEdgeComparator(this));
         Plan plan = super.dispatchTrains(schedule);
-        double rawDelay = plan.getAverageDelay();
 
-        // Build delay queue.
-        List<Delay> delays = new LinkedList<>();
+        for (int i = 0; i < 5; i++) {
+            // Make list of Delays.
+            List<Delay> delays = new LinkedList<>();
+            plan.getTrains().forEach(t -> delays.addAll(t.getItinerary().getDelays()));
+            delays.sort(new DelayComparator());
 
-        for (Train t : plan.getTrains()) {
-            t.getItinerary().getDelays().forEach(delays::add);
+            // Unlock delayed trains.
+            List<Train> trains = new LinkedList<>();
+            for (Delay d : delays) {
+                unlock(d.getAffectedTrain());
+                trains.add(d.getAffectedTrain());
+            }
+
+            // Reroute trains.
+            trains.forEach(this::routeTrain);
         }
 
-        // Prioritize delays based on comparator.
-        delays.sort(new DelayComparator());
-        delays.forEach(d -> unlock(d.getAffectedTrain()));
-//        for (int i = 0; i < 3; i++) {
-//            unlock(delays.get(i).getAffectedTrain());
+
+        // --------------------------------------
+//        // Setup raw plan.
+//        Plan plan = super.dispatchTrains(schedule);
+//        double rawDelay = plan.getAverageDelay();
+//
+//        // Build delay queue.
+//        List<Delay> delays = new LinkedList<>();
+//
+//        for (Train t : plan.getTrains()) {
+//            t.getItinerary().getDelays().forEach(delays::add);
 //        }
-
-        // Unlock routes for all Trains that have delays.
-//        unlockAll();
-//        plan.getTrains().forEach(this::unlock);
-
-        // Set edge comparator to account for routed trains.
-        graph.setEdgeComparator(new WaitingEdgeComparator(this));
-
-        delays.forEach(d -> routeTrain(d.getAffectedTrain()));
+//
+//        // Prioritize delays based on comparator.
+//        delays.sort(new DelayComparator());
+//        delays.forEach(d -> unlock(d.getAffectedTrain()));
+////        for (int i = 0; i < 3; i++) {
+////            unlock(delays.get(i).getAffectedTrain());
+////        }
+//
+//        // Unlock routes for all Trains that have delays.
+////        unlockAll();
+////        plan.getTrains().forEach(this::unlock);
+//
+//        // Set edge comparator to account for routed trains.
+//        graph.setEdgeComparator(new WaitingEdgeComparator(this));
+//
+//        delays.forEach(d -> routeTrain(d.getAffectedTrain()));
+        graph.setEdgeComparator(new EdgeComparator());
         return plan;
     }
 
-    private Itinerary findOptimalRoute(Train train, Comparator<? extends Edge> comparator) {
-
-        // Setup.
-        Itinerary optimizedItin = new Itinerary();
-        Node startNode = train.getStart();
-        Node endNode = train.getEnd();
-        Path path = new Path(startNode);
-
-        // Minimum distance from startNode to key node.
-        Map<Node, Path> minPaths = new HashMap<>(graph.getNodes().size());
-        for (Node n : graph.getNodes()) {
-            minPaths.put(n, new Path(startNode));
-        }
-
-        // Priority queue by weight.
-        PriorityQueue<Edge> priorityQueue = new PriorityQueue<>();
-
-        return optimizedItin;
-    }
+//    private Itinerary findOptimalRoute(Train train, Comparator<? extends Edge> comparator) {
+//
+//        // Setup.
+//        Itinerary optimizedItin = new Itinerary();
+//        Node startNode = train.getStart();
+//        Node endNode = train.getEnd();
+//        Path path = new Path(startNode);
+//
+//        // Minimum distance from startNode to key node.
+//        Map<Node, Path> minPaths = new HashMap<>(graph.getNodes().size());
+//        for (Node n : graph.getNodes()) {
+//            minPaths.put(n, new Path(startNode));
+//        }
+//
+//        // Priority queue by weight.
+//        PriorityQueue<Edge> priorityQueue = new PriorityQueue<>();
+//
+//        return optimizedItin;
+//    }
 }
 
 
