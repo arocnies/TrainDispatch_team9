@@ -11,7 +11,7 @@ public class Graph {
     private final Set<Node> nodes;
     private final Set<Edge> edges;
     private final Map<Node, Map<Node, Path>> directPaths; // A map from each node to it's minimum paths.
-    private EdgeComparator ec = new EdgeComparator();
+    private Comparator<Edge> ec = new EdgeComparator();
 
     /**
      * Constructor for new graph using the provided nodes.
@@ -66,21 +66,24 @@ public class Graph {
 
                 while (!priorityQueue.isEmpty()) {
                     Path currentPath = priorityQueue.poll();
-                    Node lastNode = currentPath.getLastNode();
+                    Set<Edge> availableEdges = currentPath.getLastNode().getEdges();
 
                     // Look at each edge of the current node.
-                    for (Edge edge : lastNode.getEdges()) {
+                    for (Edge edge : availableEdges) {
 
                         // If not excluded edge and it isn't the only edge.
-                        if (edge != excludedEdge || lastNode.getEdges().size() > 1) {
+                        if (edge != excludedEdge || availableEdges.size() > 1) {
                             Node nextNode = edge.getEnd();
 
-                            // If nextNode is not the last node.
+                            // If nextNode is not the last node (no backtracking).
                             if (nextNode != currentPath.getLastEdge().getStart()) {
 
                                 // If my current nodes distance is shorter than stored distance.
-                                int distanceToNode = currentPath.getCost() + edge.getWeight();
-                                if (distanceToNode < minPaths.get(nextNode).getCost() || minPaths.get(nextNode).getCost() == 0) {
+                                int currentDistance = currentPath.getCost()
+                                        + ec.compare(edge, minPaths.get(nextNode).getLastEdge());
+                                int knownDistance = minPaths.get(nextNode).getCost()
+                                        + ec.compare(minPaths.get(nextNode).getLastEdge(), edge);
+                                if (currentDistance < knownDistance || knownDistance < 0) {
 
                                     Path betterPath = new Path(currentPath);
                                     betterPath.addEdge(edge);
@@ -102,6 +105,10 @@ public class Graph {
             }
         }
         return retPath;
+    }
+
+    public void setEdgeComparator(Comparator<Edge> comparator) {
+        ec = comparator;
     }
 
     public Path getPath(Node startNode, Node endNode) {
