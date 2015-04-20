@@ -80,7 +80,7 @@ public class SlotLock<T> {
                 count++;
                 this.slots.put(i, value);
             }
-            else {
+            else if (this.slots.get(i) != value) { // Else if not already set.
                 throw new InaccessibleLockException();
             }
         }
@@ -117,17 +117,15 @@ public class SlotLock<T> {
     }
 
     /**
-     * Returns the next available unlocked range.
+     * Returns the next available unlocked range. Will always return a valid slot.
      * @param start Start of the lookup.
      * @param slots Number of slots.
-     * @return Next available range.
+     * @return Start of next available range.
      */
     public int nextOpen(int start, int slots) {
-        int open = -1;
-        for (int i = start; i < this.slots.size(); i++) {
-            if (!isLocked(i, slots)) {
-                open = i;
-            }
+        int open = start;
+        while (isLocked(open, slots)) {
+            open++;
         }
         return open;
     }
