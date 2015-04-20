@@ -7,7 +7,7 @@ import java.util.Map;
  * Created by aaron on 4/20/15.
  */
 
-public class TimeLock <T extends Train> {
+public class TimeLock <T> {
     final Map<Integer, T> slots;
 
     public TimeLock() {
@@ -39,22 +39,7 @@ public class TimeLock <T extends Train> {
     }
 
     /**
-     * Returns if the lock is free in a specific range.
-     * @param start First slot.
-     * @param amount Number of slots.
-     * @return True if already lock, false if lock is free.
-     */
-    public boolean isLocked(int start, int amount) {
-        for (int i = start; i < start + amount; i++) {
-            if (slots.get(i) != null) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Sets all the locks for the holder in a range to a specific value.
+     * Sets all the locks for the holder in a range to a specified value.
      * @param start First slot.
      * @param amount Number of slots.
      * @param holder
@@ -78,8 +63,36 @@ public class TimeLock <T extends Train> {
     }
 
     /**
-     * Prepares the lock for operations to a specific limit.
-     * @param limit
+     * Returns if the lock is free in a specified range.
+     * @param start First slot.
+     * @param amount Number of slots.
+     * @return True if already lock, false if lock is free.
+     */
+    public boolean isLocked(int start, int amount) {
+        for (int i = start; i < start + amount; i++) {
+            if (slots.get(i) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the holder of the lock for a specified slot.
+     * @param slot
+     * @return Holder for a slot.
+     */
+    public T getHolder(int slot) {
+        T retVal = null;
+        if (slots.size() > slot) {
+            retVal = slots.get(slot);
+        }
+        return retVal;
+    }
+
+    /**
+     * Prepares the lock for operations to a specified limit.
+     * @param limit Slot limit.
      */
     private void prepLock(int limit) {
         while (slots.size() < limit) {
