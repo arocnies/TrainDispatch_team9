@@ -17,43 +17,43 @@ public class TimeLock <T> {
     /**
      * Acquires the lock for a range of time.
      * @param start First slot to lock.
-     * @param amount Number of slots to lock.
+     * @param slots Number of slots to lock.
      * @param t Lock holder.
      * @return Number of values changed.
      * @throws dispatch.TimeLock.InexcusableLockException
      */
-    public int acquireLock(int start, int amount, T t) throws InexcusableLockException {
-        return setLock(start, amount, null, t);
+    public int acquireLock(int start, int slots, T t) throws InexcusableLockException {
+        return setLock(start, slots, null, t);
     }
 
     /**
      * Releases the lock for a range of time.
      * @param start First slot to release.
-     * @param amount Number of slots to release.
+     * @param slots Number of slots to release.
      * @param t Lock holder.
      * @return Number of values changed.
      * @throws InexcusableLockException
      */
-    public int releaseLock(int start, int amount, T t) throws InexcusableLockException {
-        return setLock(start, amount, t, null);
+    public int releaseLock(int start, int slots, T t) throws InexcusableLockException {
+        return setLock(start, slots, t, null);
     }
 
     /**
      * Sets all the locks for the holder in a range to a specified value.
      * @param start First slot.
-     * @param amount Number of slots.
+     * @param slots Number of slots.
      * @param holder
      * @param value
      * @return Number of values changed.
      * @throws InexcusableLockException
      */
-    private int setLock(int start, int amount, T holder, T value) throws InexcusableLockException {
-        prepLock(start + amount);
+    private int setLock(int start, int slots, T holder, T value) throws InexcusableLockException {
+        prepLock(start + slots);
         int count = 0;
-        for (int i = start; i < start + amount; i++) {
-            if (slots.get(i) == holder) {
+        for (int i = start; i < start + slots; i++) {
+            if (this.slots.get(i) == holder) {
                 count++;
-                slots.put(i, value);
+                this.slots.put(i, value);
             }
             else {
                 throw new InexcusableLockException();
@@ -65,12 +65,13 @@ public class TimeLock <T> {
     /**
      * Returns if the lock is free in a specified range.
      * @param start First slot.
-     * @param amount Number of slots.
+     * @param slots Number of slots.
      * @return True if already lock, false if lock is free.
      */
-    public boolean isLocked(int start, int amount) {
-        for (int i = start; i < start + amount; i++) {
-            if (slots.get(i) != null) {
+    public boolean isLocked(int start, int slots) {
+        prepLock(start + slots);
+        for (int i = start; i < start + slots; i++) {
+            if (this.slots.get(i) != null) {
                 return true;
             }
         }
@@ -88,6 +89,22 @@ public class TimeLock <T> {
             retVal = slots.get(slot);
         }
         return retVal;
+    }
+
+    /**
+     * Returns the next available unlocked range.
+     * @param start Start of the lookup.
+     * @param slots Number of slots.
+     * @return Next available range.
+     */
+    public int nextOpen(int start, int slots) {
+        int open = -1;
+        for (int i = start; i < this.slots.size(); i++) {
+            if (!isLocked(i, slots)) {
+                open = i;
+            }
+        }
+        return open;
     }
 
     /**
