@@ -7,10 +7,14 @@ import java.util.Map;
  * Created by aaron on 4/20/15.
  */
 
-public class TimeLock <T> {
+/**
+ * A lock class that uses numbered slots to designate multiple lockable zones.
+ * @param <T> Type of holder.
+ */
+public class SlotLock<T> {
     final Map<Integer, T> slots;
 
-    public TimeLock() {
+    public SlotLock() {
         slots = new HashMap<>();
     }
 
@@ -20,9 +24,9 @@ public class TimeLock <T> {
      * @param slots Number of slots to lock.
      * @param t Lock holder.
      * @return Number of values changed.
-     * @throws dispatch.TimeLock.InexcusableLockException
+     * @throws InaccessibleLockException
      */
-    public int acquireLock(int start, int slots, T t) throws InexcusableLockException {
+    public int acquireLock(int start, int slots, T t) throws InaccessibleLockException {
         return setLock(start, slots, null, t);
     }
 
@@ -32,10 +36,31 @@ public class TimeLock <T> {
      * @param slots Number of slots to release.
      * @param t Lock holder.
      * @return Number of values changed.
-     * @throws InexcusableLockException
+     * @throws InaccessibleLockException
      */
-    public int releaseLock(int start, int slots, T t) throws InexcusableLockException {
+    public int releaseLock(int start, int slots, T t) throws InaccessibleLockException {
         return setLock(start, slots, t, null);
+    }
+
+    /**
+     * Evicts all locks held by a specified holder.
+     * @param holder
+     * @return Number of slots evicted.
+     */
+    public int evictHolder(T holder) {
+        int count = 0;
+        try {
+            for (int slot : slots.keySet()) {
+                if (slots.get(slot) == holder) {
+                    setLock(slot, 1, holder, null);
+                    count++;
+                }
+            }
+        }
+        catch (InaccessibleLockException e) {
+            e.printStackTrace();
+        }
+        return count;
     }
 
     /**
@@ -45,9 +70,9 @@ public class TimeLock <T> {
      * @param holder
      * @param value
      * @return Number of values changed.
-     * @throws InexcusableLockException
+     * @throws InaccessibleLockException
      */
-    private int setLock(int start, int slots, T holder, T value) throws InexcusableLockException {
+    private int setLock(int start, int slots, T holder, T value) throws InaccessibleLockException {
         prepLock(start + slots);
         int count = 0;
         for (int i = start; i < start + slots; i++) {
@@ -56,7 +81,7 @@ public class TimeLock <T> {
                 this.slots.put(i, value);
             }
             else {
-                throw new InexcusableLockException();
+                throw new InaccessibleLockException();
             }
         }
         return count;
@@ -116,7 +141,7 @@ public class TimeLock <T> {
             slots.put(slots.size(), null);
         }
     }
+}
 
-    private class InexcusableLockException extends Exception {
-    }
+class InaccessibleLockException extends Exception {
 }
