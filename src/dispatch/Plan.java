@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class Plan {
 
-    Set<Train> trains;
+    private Set<Train> trains;
 
     public Plan(Schedule schedule) {
         trains = schedule.getTrains();
@@ -24,5 +24,13 @@ public class Plan {
             totalDelay += t.getDelay();
         }
         return totalDelay / trains.size();
+    }
+
+    public int getDelayCount() {
+        int totalDelayCount = 0;
+        for (Train t : trains) {
+            totalDelayCount += t.getItinerary().getDelays().size();
+        }
+        return totalDelayCount;
     }
 }

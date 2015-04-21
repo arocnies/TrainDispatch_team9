@@ -12,6 +12,7 @@ public class Graph {
     private final Set<Edge> edges;
     private final Map<Node, Map<Node, Path>> directPaths; // A map from each node to it's minimum paths.
     private Comparator<Edge> ec = new EdgeComparator();
+    private Comparator<Path> pc = new PathComparator();
 
     /**
      * Constructor for new graph using the provided nodes.
@@ -78,20 +79,16 @@ public class Graph {
                             // If nextNode is not the last node (no backtracking).
                             if (nextNode != currentPath.getLastEdge().getStart()) {
 
+                                // Setup possible path and known path.
+                                Path possiblePath = new Path(currentPath);
+                                possiblePath.addEdge(edge);
+                                Path knownPath = minPaths.get(nextNode);
+
                                 // If my current nodes distance is shorter than stored distance.
-                                int currentDistance = currentPath.getCost()
-                                        + ec.compare(edge, minPaths.get(nextNode).getLastEdge());
-                                int knownDistance = minPaths.get(nextNode).getCost()
-                                        + ec.compare(minPaths.get(nextNode).getLastEdge(), edge);
-                                if (currentDistance < knownDistance || knownDistance < 0) {
-
-                                    Path betterPath = new Path(currentPath);
-                                    betterPath.addEdge(edge);
-
-                                    // Replace old minPath in queue with current path with edge.
+                                if (pc.compare(possiblePath, knownPath) < 0 || knownPath.getCost() < 1) {
                                     priorityQueue.remove(minPaths.get(nextNode));
-                                    priorityQueue.add(betterPath);
-                                    minPaths.put(betterPath.getLastNode(), betterPath);
+                                    priorityQueue.add(possiblePath);
+                                    minPaths.put(possiblePath.getLastNode(), possiblePath);
                                 }
                             }
                         }
@@ -107,8 +104,10 @@ public class Graph {
         return retPath;
     }
 
-    public void setEdgeComparator(Comparator<Edge> comparator) {
-        ec = comparator;
+    public void setPathComparator(Comparator<Path> comparator) {
+        pc = comparator;
+        // For each key, put empty hash map sized for each node.
+        nodes.forEach(n -> directPaths.put(n, new HashMap<>(nodes.size())));
     }
 
     public Path getPath(Node startNode, Node endNode) {

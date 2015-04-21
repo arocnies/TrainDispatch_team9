@@ -33,18 +33,51 @@ public class OptimizedDispatch extends Dispatch {
         Plan plan = super.dispatchTrains(schedule);
 
         for (int i = 0; i < 1; i++) {
-            double cur = plan.getAverageDelay();
+            double prev = plan.getAverageDelay();
             plan = optimize(plan);
-            if (cur < plan.getAverageDelay()) {
-                System.out.println("It's worse!");
+            if (plan.getAverageDelay() < prev) {
+                System.out.println("+" + (prev - plan.getAverageDelay()));
             }
             else {
-                System.out.println("BETTER");
+                System.out.println("-" + Math.abs(prev - plan.getAverageDelay()));
             }
         }
         return plan;
     }
     // ---------------------------------------------------
+
+    private Itinerary getOptimizedRoute(Train train) {
+
+        // Setup.
+        graph.setPathComparator(new OptimizedPathComparator());
+        Itinerary oldItin = train.getItinerary();
+        Itinerary possibleItin = null;
+
+        // Store old itinerary cost. Take into account resource hogging.
+        int oldCost = oldItin.getCost() * oldItin.getEdgeNameSet().size();
+        int possibleCost;
+
+        // Find cheaper path.
+        int tries = 11;
+        do {
+            // Unlock train.
+            Set<String> edgeIds = train.getItinerary().getEdgeNameSet();
+            edgeIds.forEach(e -> locks.get(e).evictHolder(train));
+
+            // Try better.
+            possibleItin = getItinerary(train, null);
+            possibleCost = possibleItin.getCost() * possibleItin.getEdgeNameSet().size();
+            tries--;
+        }
+        while (oldCost < possibleCost && tries > 0);
+
+        // If did better, return better path.
+        if (tries > 0) {
+            oldItin = possibleItin;
+        }
+        graph.setPathComparator(new PathComparator());
+        return oldItin;
+    }
 
     private Plan optimize(Plan plan) {
         // Make list of Delays.
@@ -57,8 +90,8 @@ public class OptimizedDispatch extends Dispatch {
 
         for (Delay d : delays) {
             SlotLock<Train> sl = locks.get(d.getEdge().getSharedId());
-            Train stopTrain = d.getAffectedTrain();
             Train goTrain = sl.getHolder(d.getTime() + d.getCost() - 1);
+            Train stopTrain = d.getAffectedTrain();
 
             if (!trains.contains(stopTrain)) {
                 trains.add(stopTrain);
@@ -81,9 +114,9 @@ public class OptimizedDispatch extends Dispatch {
 //        }
 
         // Reroute trains.
-        graph.setEdgeComparator(new WaitingEdgeComparator());
-        trains.forEach(this::routeTrain);
-        graph.setEdgeComparator(new EdgeComparator());
+        graph.setPathComparator(new OptimizedPathComparator());
+        trains.forEach(t -> t.setItinerary(getOptimizedRoute(t)));
+        graph.setPathComparator(new PathComparator());
         return plan;
     }
 
@@ -124,9 +157,8 @@ class DelayComparator implements Comparator<Delay> {
 
     @Override
     public int compare(Delay o1, Delay o2) {
+//        return o1.getTime() * o1.getCost() - o2.getTime() * o2.getCost();
         return o1.getTime() - o2.getTime();
     }
 }
-
-//
 

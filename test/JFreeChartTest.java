@@ -59,7 +59,7 @@ public class JFreeChartTest extends ApplicationFrame
         final XYSeries opSeries  = new XYSeries( "Optimized" );
 
         // Loops through train amounts.
-        for (int i = 0; i <= 500; i += 1) {
+        for (int i = 1; i <= 500; i += 1) {
 
             double bcSum = 0;
             double slSum = 0;
