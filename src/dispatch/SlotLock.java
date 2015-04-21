@@ -93,7 +93,7 @@ public class SlotLock<T> {
      * @return True if already lock, false if lock is free.
      */
     public boolean isLocked(int start, int slots) {
-        for (int i = start; i <= start + slots; i++) {
+        for (int i = start; i < start + slots; i++) {
             if (this.slots.get(i) != null) {
                 return true;
             }

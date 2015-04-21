@@ -71,6 +71,12 @@ public class Itinerary implements Routable, Comparable<Routable> {
         return new ArrayList<>(edges);
     }
 
+    public Set<String> getEdgeNameSet() {
+        Set<String> edgeNameSet = new HashSet<>();
+        getPaths().forEach(p -> edgeNameSet.addAll(p.getEdgeNameSet()));
+        return edgeNameSet;
+    }
+
     @Override
     public int compareTo(Routable o) {
         return this.getCost() - o.getCost();

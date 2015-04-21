@@ -6,7 +6,7 @@ import graph.Node;
  * Created by Aaron on 3/27/2015.
  */
 
-public class Train {
+public class Train implements Comparable<Train> {
     private final Node startNode;
     private final Node endNode;
     private final int departureTime;
@@ -44,5 +44,10 @@ public class Train {
 
     public int getDepartureTime() {
         return departureTime;
+    }
+
+    @Override
+    public int compareTo(Train train) {
+        return this.getDepartureTime() - train.getDepartureTime();
     }
 }

@@ -5,10 +5,7 @@ import graph.Graph;
 import graph.Node;
 import graph.Path;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Aaron on 4/12/2015.
@@ -33,6 +30,7 @@ public class Dispatch {
         // Routable all trains.
 //        schedule.getTrains().forEach(this::routeTrain);
         List<Train> trains = new LinkedList<>(schedule.getTrains());
+        Collections.sort(trains);
         for (Train t : trains) {
             routeTrain(t);
         }
@@ -78,7 +76,7 @@ public class Dispatch {
                     int nextOpenTime = sl.nextOpen(time, edge.getWeight());
                     int wait = nextOpenTime - time;
                     Delay delay = new Delay(edge, train, wait, time); // Delay until after.
-                    addTime(subPath.getCost() + itin.addDelay(delay)); // Add delay to itinerary.
+                    addTime(itin.addDelay(delay)); // Add delay to itinerary.
                     path = graph.getPath(delay.getNode(), end, ignoredEdge); // Continue with new path.
                 }
 

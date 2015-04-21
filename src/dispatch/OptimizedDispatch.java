@@ -9,7 +9,7 @@ import java.util.*;
  */
 
 public class OptimizedDispatch extends Dispatch {
-    private WaitingEdgeComparator wec = new WaitingEdgeComparator(this);
+    private WaitingEdgeComparator wec = new WaitingEdgeComparator();
 
     public OptimizedDispatch(Graph graph) {
         super(graph);
@@ -31,32 +31,18 @@ public class OptimizedDispatch extends Dispatch {
     }
 
     @Override
-    public Plan dispatchTrains (Schedule schedule) {
-        graph.setEdgeComparator(new WaitingEdgeComparator(this));
+    public Plan dispatchTrains(Schedule schedule) {
         Plan plan = super.dispatchTrains(schedule);
 
-        for (int i = 0; i < 5; i++) {
-            // Make list of Delays.
-            List<Delay> delays = new LinkedList<>();
-            plan.getTrains().forEach(t -> delays.addAll(t.getItinerary().getDelays()));
-            delays.sort(new DelayComparator());
-
-            // Make list of delayed trains.
-            List<Train> trains = new LinkedList<>();
-            for (Delay d : delays) {
-                if (!trains.contains(d.getAffectedTrain())) {
-                    trains.add(d.getAffectedTrain());
-                }
+        for (int i = 0; i < 1; i++) {
+            double cur = plan.getAverageDelay();
+            plan = optimize(plan);
+            if (cur < plan.getAverageDelay()) {
+                System.out.println("It's worse!");
             }
-
-            // Unlock all delayed trains.
-            for (Train t : trains) {
-                List<Edge> edges = t.getItinerary().getEdges();
-                edges.forEach(e -> locks.get(e.getSharedId()).evictHolder(t));
+            else {
+                System.out.println("BETTER");
             }
-
-            // Reroute trains.
-            trains.forEach(this::routeTrain);
         }
 
 
@@ -91,34 +77,34 @@ public class OptimizedDispatch extends Dispatch {
         return plan;
     }
 
-//    private Itinerary findOptimalRoute(Train train, Comparator<? extends Edge> comparator) {
-//
-//        // Setup.
-//        Itinerary optimizedItin = new Itinerary();
-//        Node startNode = train.getStart();
-//        Node endNode = train.getEnd();
-//        Path path = new Path(startNode);
-//
-//        // Minimum distance from startNode to key node.
-//        Map<Node, Path> minPaths = new HashMap<>(graph.getNodes().size());
-//        for (Node n : graph.getNodes()) {
-//            minPaths.put(n, new Path(startNode));
-//        }
-//
-//        // Priority queue by weight.
-//        PriorityQueue<Edge> priorityQueue = new PriorityQueue<>();
-//
-//        return optimizedItin;
-//    }
+    private Plan optimize(Plan plan) {
+        // Make list of Delays.
+        List<Delay> delays = new LinkedList<>();
+        plan.getTrains().forEach(t -> delays.addAll(t.getItinerary().getDelays()));
+        delays.sort(new DelayComparator());
+
+        // Make list of delayed trains.
+        List<Train> trains = new LinkedList<>();
+        for (Delay d : delays) {
+            if (!trains.contains(d.getAffectedTrain())) {
+                trains.add(d.getAffectedTrain());
+            }
+        }
+
+        // Unlock all delayed trains.
+        for (Train t : trains) {
+            Set<String> edgeIds = t.getItinerary().getEdgeNameSet();
+            edgeIds.forEach(e -> locks.get(e).evictHolder(t));
+        }
+
+        // Reroute trains.
+        graph.setEdgeComparator(new WaitingEdgeComparator());
+        trains.forEach(this::routeTrain);
+        return plan;
+    }
 
     class WaitingEdgeComparator implements Comparator<Edge> {
-
-        private final Dispatch dispatch;
         private int time = 0;
-
-        public WaitingEdgeComparator(Dispatch dispatch) {
-            this.dispatch = dispatch;
-        }
 
         void setTime(int t) {
             time = t;
@@ -134,17 +120,16 @@ public class OptimizedDispatch extends Dispatch {
             int w2 = Integer.MAX_VALUE;
 
             if (s1 != null) {
-                w1 = e1.getWeight() + s1.nextOpen(time, e1.getWeight());
+                w1 = e1.getWeight() * e1.getWeight() + s1.nextOpen(time, e1.getWeight());
             }
             if (s2 != null) {
-                w2 = e2.getWeight() + s2.nextOpen(time, e2.getWeight());
+                w2 = e2.getWeight() * e2.getWeight() + s2.nextOpen(time, e2.getWeight());
             }
 
             return w1 - w2;
         }
     }
 }
-
 
 // Class for prioritizing delays.
 class DelayComparator implements Comparator<Delay> {
