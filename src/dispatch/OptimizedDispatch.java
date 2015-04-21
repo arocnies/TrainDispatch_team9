@@ -26,10 +26,8 @@ public class OptimizedDispatch extends Dispatch {
         routeTrain(train, null);
     }
 
-    protected void routeTrain(Train train, Edge edge) {
-        train.setItinerary(getItinerary(train, edge));
-    }
 
+    // ---------------------------------------------------
     @Override
     public Plan dispatchTrains(Schedule schedule) {
         Plan plan = super.dispatchTrains(schedule);
@@ -44,38 +42,9 @@ public class OptimizedDispatch extends Dispatch {
                 System.out.println("BETTER");
             }
         }
-
-
-        // --------------------------------------
-//        // Setup raw plan.
-//        Plan plan = super.dispatchTrains(schedule);
-//        double rawDelay = plan.getAverageDelay();
-//
-//        // Build delay queue.
-//        List<Delay> delays = new LinkedList<>();
-//
-//        for (Train t : plan.getTrains()) {
-//            t.getItinerary().getDelays().forEach(delays::add);
-//        }
-//
-//        // Prioritize delays based on comparator.
-//        delays.sort(new DelayComparator());
-//        delays.forEach(d -> unlock(d.getAffectedTrain()));
-////        for (int i = 0; i < 3; i++) {
-////            unlock(delays.get(i).getAffectedTrain());
-////        }
-//
-//        // Unlock routes for all Trains that have delays.
-////        unlockAll();
-////        plan.getTrains().forEach(this::unlock);
-//
-//        // Set edge comparator to account for routed trains.
-//        graph.setEdgeComparator(new WaitingEdgeComparator(this));
-//
-//        delays.forEach(d -> routeTrain(d.getAffectedTrain()));
-        graph.setEdgeComparator(new EdgeComparator());
         return plan;
     }
+    // ---------------------------------------------------
 
     private Plan optimize(Plan plan) {
         // Make list of Delays.
@@ -85,9 +54,17 @@ public class OptimizedDispatch extends Dispatch {
 
         // Make list of delayed trains.
         List<Train> trains = new LinkedList<>();
+
         for (Delay d : delays) {
-            if (!trains.contains(d.getAffectedTrain())) {
-                trains.add(d.getAffectedTrain());
+            SlotLock<Train> sl = locks.get(d.getEdge().getSharedId());
+            Train stopTrain = d.getAffectedTrain();
+            Train goTrain = sl.getHolder(d.getTime() + d.getCost() - 1);
+
+            if (!trains.contains(stopTrain)) {
+                trains.add(stopTrain);
+            }
+            if (!trains.contains(goTrain)) {
+                trains.add(goTrain);
             }
         }
 
@@ -97,10 +74,21 @@ public class OptimizedDispatch extends Dispatch {
             edgeIds.forEach(e -> locks.get(e).evictHolder(t));
         }
 
+//        // TEST: Unlock all trains.
+//        for (Train t : plan.getTrains()) {
+//            Set<String> edgeIds = t.getItinerary().getEdgeNameSet();
+//            edgeIds.forEach(e -> locks.get(e).evictHolder(t));
+//        }
+
         // Reroute trains.
         graph.setEdgeComparator(new WaitingEdgeComparator());
         trains.forEach(this::routeTrain);
+        graph.setEdgeComparator(new EdgeComparator());
         return plan;
+    }
+
+    protected void routeTrain(Train train, Edge edge) {
+        train.setItinerary(getItinerary(train, edge));
     }
 
     class WaitingEdgeComparator implements Comparator<Edge> {

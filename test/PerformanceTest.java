@@ -16,7 +16,7 @@ public class PerformanceTest {
         Graph graph = GraphFactory.generateGraph(args[0]);
         for (int i = tests; i > 0; i--) {
             Schedule schedule = new Schedule(300, graph.getNodes(), 1000);
-            Dispatch dispatch = new Dispatch(graph);
+            Dispatch dispatch = new OptimizedDispatch(graph);
             Plan plan = dispatch.dispatchTrains(schedule);
 
             totalAvrDelay += plan.getAverageDelay();
@@ -24,5 +24,6 @@ public class PerformanceTest {
         System.out.println("Tests = " + tests );
         System.out.println("Runtime = " + (System.currentTimeMillis() - start) / 1000.0 );
         System.out.println("Average delay = " + totalAvrDelay / tests);
+        System.out.println("Performance = " + 1/(totalAvrDelay / tests));
     }
 }

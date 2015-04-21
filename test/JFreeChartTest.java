@@ -9,14 +9,11 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
-
-import java.awt.*;
 
 /**
  * Package : PACKAGE_NAME
@@ -62,7 +59,7 @@ public class JFreeChartTest extends ApplicationFrame
         final XYSeries opSeries  = new XYSeries( "Optimized" );
 
         // Loops through train amounts.
-        for (int i = 0; i <= 1000; i += 50) {
+        for (int i = 0; i <= 500; i += 1) {
 
             double bcSum = 0;
             double slSum = 0;

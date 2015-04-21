@@ -8,7 +8,7 @@ import java.util.Map;
  */
 
 /**
- * A lock class that uses numbered slots to designate multiple lockable zones.
+ * A locking class that uses numbered entries for multiple lockable slots.
  * @param <T> Type of holder.
  */
 public class SlotLock<T> {
@@ -107,11 +107,7 @@ public class SlotLock<T> {
      * @return Holder for a slot.
      */
     public T getHolder(int slot) {
-        T retVal = null;
-        if (slots.size() > slot) {
-            retVal = slots.get(slot);
-        }
-        return retVal;
+        return slots.get(slot);
     }
 
     /**

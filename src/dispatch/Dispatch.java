@@ -27,13 +27,10 @@ public class Dispatch {
     // Main method called to route the trains and return a plan.
     public Plan dispatchTrains(Schedule schedule) {
 
-        // Routable all trains.
-//        schedule.getTrains().forEach(this::routeTrain);
+        // Route all trains.
         List<Train> trains = new LinkedList<>(schedule.getTrains());
         Collections.sort(trains);
-        for (Train t : trains) {
-            routeTrain(t);
-        }
+        trains.forEach(this::routeTrain);
         return new Plan(schedule);
     }
 
@@ -58,7 +55,7 @@ public class Dispatch {
         // Setup.
         Node start = train.getStart();
         Node end = train.getEnd();
-        time = train.getDepartureTime();
+        setTime(train.getDepartureTime());
         Itinerary itin = new Itinerary(); // Start building Itinerary.
         Path path = graph.getPath(start, end, ignoredEdge); // Start building path.
 
@@ -98,5 +95,9 @@ public class Dispatch {
 
     protected void addTime(int t) {
         time += t;
+    }
+
+    protected void setTime(int t) {
+        time = t;
     }
 }

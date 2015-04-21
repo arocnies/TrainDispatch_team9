@@ -26,7 +26,7 @@ public class Graph {
 
         // Initialize direct path map.
         directPaths = new HashMap<>(nodes.size());
-        // For each key, put emtpy hash map sized for each node.
+        // For each key, put empty hash map sized for each node.
         nodes.forEach(n -> directPaths.put(n, new HashMap<>(nodes.size())));
     }
 
