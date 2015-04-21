@@ -87,8 +87,7 @@ public class Dispatch {
                 addTime(itin.addDelay(delay)); // Add delay to itinerary.
                 path = graph.getPath(delay.getNode(), end, ignoredEdge); // Continue with new path.
             }
-            addTime(edge.getWeight());
-            lockEdge(edge, time - edge.getWeight(), time); // Lock edge for using it.
+            lockEdge(edge, time, time + edge.getWeight()); // Lock edge for using it.
             stepCount++;
         }
 
@@ -116,22 +115,6 @@ public class Dispatch {
             for (int i = start; i < finish; i++) {
                 edgeLock.set(i, true);
             }
-        }
-    }
-
-    protected void unlockEdge(Edge edge, int start, int finish) {
-        if (edge.getStart() != null) {
-            List<Boolean> edgeLock = lock.get(edge);
-
-            for (int i = start; i < finish; i++) {
-                edgeLock.set(i, false);
-            }
-        }
-    }
-
-    protected void unlockPath(Path path, int time) {
-        for (Edge e : path.getEdges()) {
-            unlockEdge(e, time, time + e.getWeight());
         }
     }
 
@@ -164,46 +147,21 @@ public class Dispatch {
     protected void unlock(Train train) {
         Itinerary itin = train.getItinerary();
         int time = train.getDepartureTime();
-        List<Boolean> l = null;
 
         for (Routable r : itin.getElements()) {
-
             if (r instanceof Path) { // TODO: Ugh... This should be redesigned with object-structured locking.
-
-                unlockPath((Path) r, time);
-                // ----------
-
-//                // Loop through path's edges.
-//                for (Edge edge : r.getEdges()) {
-//                    unlockEdge(edge, time, time + edge.getWeight());
-//                    time += edge.getWeight();
-//
-//
-//
-//
-//
-////                    List<Boolean> edgeLock = lock.get(edge);
-////                    l = edgeLock;
-////                    int stop = time + edge.getWeight();
-////                    for (int i = time; i < stop; i++) {
-//////                        prepLock(edge, i);
-////                        try {
-////                            System.out.println(edgeLock.get(i));
-////                            edgeLock.set(i, false);
-////                        } catch (Exception e) {
-////                            e.printStackTrace();
-////                        }
-////                    }
-////                    time += edge.getWeight();
-//                }
+                for (Edge edge : r.getEdges()) {
+                    List<Boolean> edgeLock = lock.get(edge);
+                    for (int i = time; i < time + edge.getWeight(); i++) {
+                        prepLock(edge, i);
+                        edgeLock.set(i, false);
+                    }
+                    time += edge.getWeight();
+                }
             }
             else if (r instanceof Delay){ // Else it is a delay.
-//                time += r.getCost();
+                time += r.getCost();
             }
-
-            time += r.getCost();
         }
-//        if (l.size() > 0)
-//        l.get(0);
     }
 }
