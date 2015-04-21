@@ -14,12 +14,9 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.statistics.DefaultStatisticalCategoryDataset;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
-
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
 
 public class WhiskerTest extends ApplicationFrame
@@ -91,7 +88,7 @@ http://www.jfree.org/jfreechart/api/javadoc/org/jfree/data/statistics/DefaultSta
 
 
         final XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(bcSeries);
+//        dataset.addSeries(bcSeries);
         //dataset.addSeries(slSeries);
         //dataset.addSeries(opSeries);
 

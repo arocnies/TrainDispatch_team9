@@ -95,65 +95,18 @@ public class OptimizedDispatch extends Dispatch {
 
             if (!trains.contains(stopTrain)) {
                 trains.add(stopTrain);
-//                trains.push(stopTrain);
             }
             if (!trains.contains(goTrain)) {
                 trains.add(goTrain);
-//                trains.push(goTrain);
             }
         }
 
-        // --------OLD----------
-        // Unlock all delayed trains.
         for (Train t : trains) {
             Set<String> edgeIds = t.getItinerary().getEdgeNameSet();
             edgeIds.forEach(e -> locks.get(e).evictHolder(t));
         }
-//        // TEST: Unlock all trains.
-//        for (Train t : plan.getTrains()) {
-//            Set<String> edgeIds = t.getItinerary().getEdgeNameSet();
-//            edgeIds.forEach(e -> locks.get(e).evictHolder(t));
-//        }
-//        if (delays.size() > 0) {
-//            Train train = delays.get(0).getAffectedTrain();
-//            while (delays.size() > 0) {
-//                for (Delay d : train.getItinerary().getDelays()) {
-//                    if (!delays.contains(d)) {
-//                        delays.add(d);
-//                    }
-//                }
-//            }
-//        }
-        //----------------------
-
-
-
-
-
-
-        // Reroute trains.
-
-        //------------
-
-        //------------
         graph.setPathComparator(new OptimizedPathComparator());
-////        plan.getTrains().forEach(t -> t.setItinerary(getOptimizedRoute(t)));
         trains.forEach(t -> t.setItinerary(getOptimizedRoute(t)));
-//        if (delays.size() > 0) {
-//            rerouteTrain(delays.get(0).getAffectedTrain());
-//        }
-
-
-
-
-        //////////////////////////////////////////////////////////////
-
-
-        //
-
-
-        for (Delay d : delays) {
-        }
         graph.setPathComparator(new PathComparator());
         return plan;
     }
@@ -211,8 +164,7 @@ class DelayComparator implements Comparator<Delay> {
 
     @Override
     public int compare(Delay o1, Delay o2) {
-//        return o1.getTime() * o1.getCost() - o2.getTime() * o2.getCost();
-        return o2.getTime() - o1.getTime();
+        return o2.getTime() - o1.getTime(); // Later in time delays are better.
     }
 }
 
