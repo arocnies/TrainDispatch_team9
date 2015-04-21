@@ -45,9 +45,7 @@ public class OptimizedDispatch extends Dispatch {
             List<Train> trains = new LinkedList<>();
             for (Delay d : delays) {
                 unlock(d.getAffectedTrain());
-                if (!trains.contains(d.getAffectedTrain())) {
-                    trains.add(d.getAffectedTrain());
-                }
+                trains.add(d.getAffectedTrain());
             }
 
             // Reroute trains.
