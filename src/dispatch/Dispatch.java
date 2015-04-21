@@ -123,11 +123,6 @@ public class Dispatch {
         if (edge.getStart() != null) {
             List<Boolean> edgeLock = lock.get(edge.getSharedId());
 
-            // Debug.
-            if (edgeLock != null && finish > edgeLock.size()) {
-                System.out.print("fail");
-            }
-
             for (int i = start; i < finish; i++) {
                 try {
                     edgeLock.set(i, false);
@@ -142,7 +137,6 @@ public class Dispatch {
     protected void unlockPath(Path path, int time) {
         for (Edge e : path.getEdges()) {
             unlockEdge(e, time, time + e.getWeight());
-            time += e.getWeight();
         }
     }
 
@@ -175,13 +169,7 @@ public class Dispatch {
     protected void unlock(Train train) {
         Itinerary itin = train.getItinerary();
         int time = train.getDepartureTime();
-
-        // Debug stuff.
         List<Boolean> l = null;
-        if (l != null && time > l.size()) {
-            System.out.print("fail");
-        }
-
 
         for (Routable r : itin.getElements()) {
 
