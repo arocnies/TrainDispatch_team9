@@ -5,7 +5,9 @@ import graph.Graph;
 import graph.Node;
 import graph.Path;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,15 +16,33 @@ import java.util.Map;
 
 public class Dispatch {
     protected final Graph graph;
-    protected final Map<String, SlotLock<Train>> locks;
+    protected final Map<String, List<Boolean>> lock; // A map of edges to the next integer time the edge is free.
     protected int time = 0;
+    //TODO: Refactor with objected based locking.
 
     public Dispatch(Graph graph, int duration) {
         this.graph = graph;
-        locks = new HashMap<>();
+        lock = new HashMap<>(graph.getEdges().size());
 
-        // Fill locks map with slot locks.
-        graph.getEdges().forEach(e -> locks.put(e.getSharedId(), new SlotLock<>()));
+        // Fill lock map with false (not locked).
+        for (Edge edge : graph.getEdges()) {
+            ArrayList<Boolean> edgeLock = new ArrayList<>(duration);
+            for (int i = 0; i < 0; i++) {
+                edgeLock.add(false);
+            }
+            lock.put(edge.getSharedId(), edgeLock);
+        }
+    }
+
+    protected void unlockAll() {
+        // Fill lock map with zeros.
+        for (Edge edge : graph.getEdges()) {
+            List<Boolean> edgeLock = lock.get(edge.getSharedId());
+            for (int i = 0; i < edgeLock.size(); i++) {
+                edgeLock.set(i, false);
+            }
+            lock.put(edge.getSharedId(), edgeLock);
+        }
     }
 
     // Main method called to route the trains and return a plan.
@@ -60,30 +80,16 @@ public class Dispatch {
 
         int stepCount = 1;
         for (Edge edge : path.getEdges()) {
-            if (edge.getStart() != null) {
-
-                SlotLock<Train> sl = locks.get(edge.getSharedId()); // Get lock.
-                if (sl.isLocked(time, edge.getWeight())) { // If locked at time.
-
-                    Path subPath = path.subPath(0, stepCount); // Split path.
-                    addTime(itin.addPath(subPath)); // Add path to itinerary.
-
-                    int nextOpenTime = sl.nextOpen(time, edge.getWeight());
-                    Delay delay = new Delay(subPath.getLastEdge(), train, nextOpenTime - time, time); // Delay until after.
-                    addTime(itin.addDelay(delay)); // Add delay to itinerary.
-                    path = graph.getPath(delay.getNode(), end, ignoredEdge); // Continue with new path.
-                }
-
-                // Try to acquire the lock for that edge.
-                try {
-                    sl.acquireLock(time, edge.getWeight(), train);
-                    addTime(edge.getWeight());
-                }
-                catch (InaccessibleLockException e) {
-                    e.printStackTrace();
-                }
-                stepCount++;
+            if (isLocked(edge, time)) { // If locked at time.
+                Path subPath = path.subPath(0, stepCount); // Split path.
+                addTime(itin.addPath(subPath)); // Add path to itinerary.
+                Delay delay = new Delay(subPath.getLastEdge(), train, getWait(edge, time), time); // Delay until after.
+                addTime(itin.addDelay(delay)); // Add delay to itinerary.
+                path = graph.getPath(delay.getNode(), end, ignoredEdge); // Continue with new path.
             }
+            addTime(edge.getWeight());
+            lockEdge(edge, time - edge.getWeight(), time); // Lock edge for using it.
+            stepCount++;
         }
 
         itin.addPath(path);
@@ -92,5 +98,99 @@ public class Dispatch {
 
     protected void addTime(int t) {
         time += t;
+    }
+
+    protected int getWait(Edge edge, int time) {
+        int wait = 0;
+        for (int i = time; isLocked(edge, i); i++) {
+            wait++;
+        }
+        return wait;
+    }
+
+    protected void lockEdge(Edge edge, int start, int finish) {
+        if (edge.getStart() != null) {
+            prepLock(edge, finish);
+            List<Boolean> edgeLock = lock.get(edge.getSharedId());
+
+            for (int i = start; i < finish; i++) {
+                edgeLock.set(i, true);
+            }
+        }
+    }
+
+    protected void unlockEdge(Edge edge, int start, int finish) {
+        if (edge.getStart() != null) {
+            List<Boolean> edgeLock = lock.get(edge.getSharedId());
+
+            // Debug.
+            if (edgeLock != null && finish > edgeLock.size()) {
+                System.out.print("fail");
+            }
+
+            for (int i = start; i < finish; i++) {
+                try {
+                    edgeLock.set(i, false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw e;
+                }
+            }
+        }
+    }
+
+    protected void unlockPath(Path path, int time) {
+        for (Edge e : path.getEdges()) {
+            unlockEdge(e, time, time + e.getWeight());
+            time += e.getWeight();
+        }
+    }
+
+    protected boolean isLocked(Edge edge, int time) {
+        prepLock(edge, time);
+        return isLocked(edge, time, time + edge.getWeight());
+    }
+
+    protected boolean isLocked(Edge edge, int start, int end) {
+        if (edge.getStart() != null) {
+            prepLock(edge, end);
+            List<Boolean> edgeLock = lock.get(edge.getSharedId());
+
+            for (int i = start; i < end; i++) {
+                if (edgeLock.get(i)) return true;
+            }
+        }
+        return false;
+    }
+
+    // Insures the lock will be big enough for operations.
+    protected void prepLock(Edge edge, int time) {
+        List<Boolean> edgeLock = lock.get(edge.getSharedId());
+
+        while (edge.getStart() != null && edgeLock.size() < time + edge.getWeight()) {
+            edgeLock.add(false);
+        }
+    }
+
+    protected void unlock(Train train) {
+        Itinerary itin = train.getItinerary();
+        int time = train.getDepartureTime();
+
+        // Debug stuff.
+        List<Boolean> l = null;
+        if (l != null && time > l.size()) {
+            System.out.print("fail");
+        }
+
+
+        for (Routable r : itin.getElements()) {
+
+            if (r instanceof Path) { // TODO: Ugh... This should be redesigned with object-structured locking.
+                unlockPath((Path) r, time);
+            }
+            time += r.getCost();
+        }
+//        if (l.size() > 0)
+//        l.get(0);
     }
 }

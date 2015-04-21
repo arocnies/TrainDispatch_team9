@@ -32,7 +32,7 @@ public class BaseCaseDispatch extends Dispatch {
         int time = train.getDepartureTime(); // Start tracking simulated time.
         final Path path = graph.getPath(train.getStart(), train.getEnd()); // Start building path.
 
-        while (isPathLocked(path, time, path.getCost())) {
+        while (isLocked(path, time, time + path.getCost())) {
             time++;
         }
         if (time != train.getDepartureTime()) {
@@ -40,25 +40,15 @@ public class BaseCaseDispatch extends Dispatch {
             itin.addDelay(delay);
         }
         itin.addPath(path);
-
-        // Lock edges.
-        for (Edge edge : itin.getEdges()) {
-            try {
-                SlotLock<Train> sl = locks.get(edge.getSharedId());
-                sl.acquireLock(time, time + path.getCost(), train);
-            }
-            catch (InaccessibleLockException e) {
-                e.printStackTrace();
-            }
-        }
+        final int finalTime = time;
+        itin.getEdges().forEach(e -> lockEdge(e, finalTime, finalTime + path.getCost()));
 
         train.setItinerary(itin);
     }
 
-    protected boolean isPathLocked(Path path, int start, int duration) {
+    protected boolean isLocked(Path path, int start, int end) {
         for (Edge edge : path.getEdges()) {
-            SlotLock sl = locks.get(edge.getSharedId());
-            if (sl.isLocked(start, duration)) {
+            if (isLocked(edge, start, end)) {
                 return true;
             }
         }

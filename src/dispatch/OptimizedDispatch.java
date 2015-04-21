@@ -41,18 +41,13 @@ public class OptimizedDispatch extends Dispatch {
             plan.getTrains().forEach(t -> delays.addAll(t.getItinerary().getDelays()));
             delays.sort(new DelayComparator());
 
-            // Make list of delayed trains.
+            // Unlock delayed trains.
             List<Train> trains = new LinkedList<>();
             for (Delay d : delays) {
+                unlock(d.getAffectedTrain());
                 if (!trains.contains(d.getAffectedTrain())) {
                     trains.add(d.getAffectedTrain());
                 }
-            }
-
-            // Unlock all delayed trains.
-            for (Train t : trains) {
-                List<Edge> edges = t.getItinerary().getEdges();
-                edges.forEach(e -> locks.get(e.getSharedId()).evictHolder(t));
             }
 
             // Reroute trains.
@@ -110,39 +105,6 @@ public class OptimizedDispatch extends Dispatch {
 //
 //        return optimizedItin;
 //    }
-
-    class WaitingEdgeComparator implements Comparator<Edge> {
-
-        private final Dispatch dispatch;
-        private int time = 0;
-
-        public WaitingEdgeComparator(Dispatch dispatch) {
-            this.dispatch = dispatch;
-        }
-
-        void setTime(int t) {
-            time = t;
-        }
-
-        @Override
-        public int compare(Edge e1, Edge e2) {
-
-            SlotLock s1 = locks.get(e1.getSharedId());
-            SlotLock s2 = locks.get(e2.getSharedId());
-
-            int w1 = Integer.MAX_VALUE;
-            int w2 = Integer.MAX_VALUE;
-
-            if (s1 != null) {
-                w1 = e1.getWeight() + s1.nextOpen(time, e1.getWeight());
-            }
-            if (s2 != null) {
-                w2 = e2.getWeight() + s2.nextOpen(time, e2.getWeight());
-            }
-
-            return w1 - w2;
-        }
-    }
 }
 
 
@@ -156,4 +118,21 @@ class DelayComparator implements Comparator<Delay> {
 }
 
 //
+class WaitingEdgeComparator implements Comparator<Edge> {
 
+    private final Dispatch dispatch;
+    private int time = 0;
+
+    public WaitingEdgeComparator(Dispatch dispatch) {
+        this.dispatch = dispatch;
+    }
+
+    void setTime(int t) {
+        time = t;
+    }
+
+    @Override
+    public int compare(Edge e1, Edge e2) {
+        return (e2.getWeight() + dispatch.getWait(e2, time)) - (e1.getWeight() + dispatch.getWait(e1, time));
+    }
+}
