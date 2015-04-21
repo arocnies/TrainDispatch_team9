@@ -80,44 +80,98 @@ public class OptimizedDispatch extends Dispatch {
     }
 
     private Plan optimize(Plan plan) {
+
         // Make list of Delays.
         List<Delay> delays = new LinkedList<>();
         plan.getTrains().forEach(t -> delays.addAll(t.getItinerary().getDelays()));
-        delays.sort(new DelayComparator());
+        delays.sort(new DelayComparator()); // Sort by time. Early -> later.
 
-        // Make list of delayed trains.
-        List<Train> trains = new LinkedList<>();
-
+        // Make list of conflict trains.
+        Queue<Train> trains = new LinkedList<>();
         for (Delay d : delays) {
             SlotLock<Train> sl = locks.get(d.getEdge().getSharedId());
-            Train goTrain = sl.getHolder(d.getTime() + d.getCost() - 1);
             Train stopTrain = d.getAffectedTrain();
+            Train goTrain = sl.getHolder(d.getTime() + d.getCost() - 1);
 
             if (!trains.contains(stopTrain)) {
                 trains.add(stopTrain);
+//                trains.push(stopTrain);
             }
             if (!trains.contains(goTrain)) {
                 trains.add(goTrain);
+//                trains.push(goTrain);
             }
         }
 
+        // --------OLD----------
         // Unlock all delayed trains.
         for (Train t : trains) {
             Set<String> edgeIds = t.getItinerary().getEdgeNameSet();
             edgeIds.forEach(e -> locks.get(e).evictHolder(t));
         }
-
 //        // TEST: Unlock all trains.
 //        for (Train t : plan.getTrains()) {
 //            Set<String> edgeIds = t.getItinerary().getEdgeNameSet();
 //            edgeIds.forEach(e -> locks.get(e).evictHolder(t));
 //        }
+//        if (delays.size() > 0) {
+//            Train train = delays.get(0).getAffectedTrain();
+//            while (delays.size() > 0) {
+//                for (Delay d : train.getItinerary().getDelays()) {
+//                    if (!delays.contains(d)) {
+//                        delays.add(d);
+//                    }
+//                }
+//            }
+//        }
+        //----------------------
+
+
+
+
+
 
         // Reroute trains.
+
+        //------------
+
+        //------------
         graph.setPathComparator(new OptimizedPathComparator());
+////        plan.getTrains().forEach(t -> t.setItinerary(getOptimizedRoute(t)));
         trains.forEach(t -> t.setItinerary(getOptimizedRoute(t)));
+//        if (delays.size() > 0) {
+//            rerouteTrain(delays.get(0).getAffectedTrain());
+//        }
+
+
+
+
+        //////////////////////////////////////////////////////////////
+
+
+        //
+
+
+        for (Delay d : delays) {
+        }
         graph.setPathComparator(new PathComparator());
         return plan;
+    }
+
+    private Train rerouteTrain(Train train) {
+
+        // Pre recursion. (Unlock train).
+        train.getItinerary().getEdgeNameSet().forEach(e -> locks.get(e).evictHolder(train));
+        List<Delay> delays = train.getItinerary().getDelays();
+
+        // BaseCase.
+        if (delays.size() == 0) {
+            return train;
+        }
+
+        delays.forEach(d -> rerouteTrain(d.getAffectedTrain()));
+        delays.forEach(d -> routeTrain(d.getAffectedTrain()));
+        return train;
     }
 
     protected void routeTrain(Train train, Edge edge) {
@@ -158,7 +212,7 @@ class DelayComparator implements Comparator<Delay> {
     @Override
     public int compare(Delay o1, Delay o2) {
 //        return o1.getTime() * o1.getCost() - o2.getTime() * o2.getCost();
-        return o1.getTime() - o2.getTime();
+        return o2.getTime() - o1.getTime();
     }
 }
 

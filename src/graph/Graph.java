@@ -84,7 +84,7 @@ public class Graph {
                                 possiblePath.addEdge(edge);
                                 Path knownPath = minPaths.get(nextNode);
 
-                                // If my current nodes distance is shorter than stored distance.
+                                // If my current nodes distance is less than stored distance.
                                 if (pc.compare(possiblePath, knownPath) < 0 || knownPath.getCost() < 1) {
                                     priorityQueue.remove(minPaths.get(nextNode));
                                     priorityQueue.add(possiblePath);
