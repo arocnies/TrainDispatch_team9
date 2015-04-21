@@ -15,8 +15,8 @@ public class PerformanceTest {
 
         Graph graph = GraphFactory.generateGraph(args[0]);
         for (int i = tests; i > 0; i--) {
-            Schedule schedule = new Schedule(10, graph.getNodes(), 1000);
-            Dispatch dispatch = new Dispatch(graph);
+            Schedule schedule = new Schedule(100, graph.getNodes(), 1000);
+            Dispatch dispatch = new Dispatch(graph, schedule.getDuration());
             Plan plan = dispatch.dispatchTrains(schedule);
 
             totalAvrDelay += plan.getAverageDelay();
