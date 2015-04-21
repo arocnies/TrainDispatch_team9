@@ -27,7 +27,6 @@ public class SlotLock<T> {
      * @throws InaccessibleLockException
      */
     public int acquireLock(int start, int slots, T t) throws InaccessibleLockException {
-        System.err.println(isLocked(start, slots));
         return setLock(start, slots, null, t);
     }
 
@@ -81,7 +80,7 @@ public class SlotLock<T> {
                 count++;
                 this.slots.put(i, value);
             }
-            else { // Else if not already set.
+            else if (this.slots.get(i) != value) { // Else if not already set.
                 throw new InaccessibleLockException();
             }
         }

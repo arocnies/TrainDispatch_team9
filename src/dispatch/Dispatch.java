@@ -72,12 +72,11 @@ public class Dispatch {
                 if (sl.isLocked(time, edge.getWeight())) { // If locked at time.
 
                     Path subPath = path.subPath(0, stepCount); // Split path.
-//                    addTime(itin.addPath(subPath)); // Add path to itinerary.
-                    itin.addPath(subPath); // Add path to itinerary.
+                    addTime(itin.addPath(subPath)); // Add path to itinerary.
 
                     int nextOpenTime = sl.nextOpen(time, edge.getWeight());
-                    Delay delay = new Delay(subPath.getLastEdge(), train, nextOpenTime, time); // Delay until after.
-                    addTime(subPath.getCost() + itin.addDelay(delay)); // Add delay to itinerary.
+                    Delay delay = new Delay(subPath.getLastEdge(), train, nextOpenTime - time, time); // Delay until after.
+                    addTime(itin.addDelay(delay)); // Add delay to itinerary.
                     path = graph.getPath(delay.getNode(), end, ignoredEdge); // Continue with new path.
                 }
 
