@@ -4,11 +4,15 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+//import org.jfree.chart.renderer.xy.DeviationRenderer;
+
+
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
+
 
 import java.awt.*;
 
@@ -35,10 +39,12 @@ public class XYLineChart_AWT extends ApplicationFrame
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
         renderer.setSeriesPaint(0, Color.RED);
 
-        renderer.setSeriesStroke( 0 , new BasicStroke( 4.0f ) );
+        renderer.setSeriesStroke( 0, new BasicStroke( 4.0f ) );
 
         plot.setRenderer( renderer );
         setContentPane( chartPanel );
+
+        //DeviationRenderer deviationrenderer = new DeviationRenderer(true, false);
     }
 
     private XYDataset createDataset( )
@@ -55,6 +61,7 @@ public class XYLineChart_AWT extends ApplicationFrame
 
         final XYSeriesCollection dataset = new XYSeriesCollection( );
         dataset.addSeries( inputData);
+
 
         return dataset;
     }
