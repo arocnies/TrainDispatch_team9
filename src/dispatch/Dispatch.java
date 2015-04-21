@@ -6,8 +6,6 @@ import graph.Node;
 import graph.Path;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,11 +29,7 @@ public class Dispatch {
     public Plan dispatchTrains(Schedule schedule) {
 
         // Routable all trains.
-//        schedule.getTrains().forEach(this::routeTrain);
-        List<Train> trains = new LinkedList<>(schedule.getTrains());
-        for (Train t : trains) {
-            routeTrain(t);
-        }
+        schedule.getTrains().forEach(this::routeTrain);
         return new Plan(schedule);
     }
 
