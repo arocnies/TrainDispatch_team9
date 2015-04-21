@@ -29,7 +29,7 @@ public class JFreeChartTest extends ApplicationFrame
         JFreeChart xylineChart = ChartFactory.createXYLineChart(
                 chartTitle,
                 "Trains",
-                "Delay",
+                "Performance",
                 createDataset( m , n ),
                 PlotOrientation.VERTICAL,
                 true, true, false);
