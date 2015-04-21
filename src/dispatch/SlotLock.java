@@ -74,7 +74,6 @@ public class SlotLock<T> {
      * @throws InaccessibleLockException
      */
     private int setLock(int start, int slots, T holder, T value) throws InaccessibleLockException {
-        prepLock(start + slots);
         int count = 0;
         for (int i = start; i < start + slots; i++) {
             if (this.slots.get(i) == holder) {
@@ -95,8 +94,7 @@ public class SlotLock<T> {
      * @return True if already lock, false if lock is free.
      */
     public boolean isLocked(int start, int slots) {
-        prepLock(start + slots);
-        for (int i = start; i < start + slots; i++) {
+        for (int i = start; i <= start + slots; i++) {
             if (this.slots.get(i) != null) {
                 return true;
             }
@@ -129,16 +127,6 @@ public class SlotLock<T> {
             open++;
         }
         return open;
-    }
-
-    /**
-     * Prepares the lock for operations to a specified limit.
-     * @param limit Slot limit.
-     */
-    private void prepLock(int limit) {
-        while (slots.size() < limit) {
-            slots.put(slots.size(), null);
-        }
     }
 }
 

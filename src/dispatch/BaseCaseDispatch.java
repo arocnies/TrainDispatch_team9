@@ -43,12 +43,14 @@ public class BaseCaseDispatch extends Dispatch {
 
         // Lock edges.
         for (Edge edge : itin.getEdges()) {
-            try {
-                SlotLock<Train> sl = locks.get(edge.getSharedId());
-                sl.acquireLock(time, time + path.getCost(), train);
-            }
-            catch (InaccessibleLockException e) {
-                e.printStackTrace();
+            if (edge.getStart() != null) {
+                try {
+                    SlotLock<Train> sl = locks.get(edge.getSharedId());
+                    sl.acquireLock(time, time + path.getCost(), train);
+                }
+                catch (InaccessibleLockException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -57,9 +59,11 @@ public class BaseCaseDispatch extends Dispatch {
 
     protected boolean isPathLocked(Path path, int start, int duration) {
         for (Edge edge : path.getEdges()) {
-            SlotLock sl = locks.get(edge.getSharedId());
-            if (sl.isLocked(start, duration)) {
-                return true;
+            if (edge.getStart() != null) {
+                SlotLock sl = locks.get(edge.getSharedId());
+                if (sl.isLocked(start, duration)) {
+                    return true;
+                }
             }
         }
         return false;

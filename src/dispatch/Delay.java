@@ -26,7 +26,7 @@ public class Delay implements Routable {
         }
         this.edge = edge;
         this.affectedTrain = affectedTrain;
-        this.cost = cost + edge.getWeight();
+        this.cost = cost;
         this.time = time;
     }
 

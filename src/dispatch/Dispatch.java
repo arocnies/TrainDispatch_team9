@@ -19,7 +19,7 @@ public class Dispatch {
     protected final Map<String, SlotLock<Train>> locks;
     protected int time = 0;
 
-    public Dispatch(Graph graph, int duration) {
+    public Dispatch(Graph graph) {
         this.graph = graph;
         locks = new HashMap<>();
 
@@ -76,7 +76,8 @@ public class Dispatch {
                     itin.addPath(subPath); // Add path to itinerary.
 
                     int nextOpenTime = sl.nextOpen(time, edge.getWeight());
-                    Delay delay = new Delay(subPath.getLastEdge(), train, nextOpenTime, time); // Delay until after.
+                    int wait = nextOpenTime - time;
+                    Delay delay = new Delay(edge, train, wait, time); // Delay until after.
                     addTime(subPath.getCost() + itin.addDelay(delay)); // Add delay to itinerary.
                     path = graph.getPath(delay.getNode(), end, ignoredEdge); // Continue with new path.
                 }

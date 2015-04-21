@@ -18,7 +18,7 @@ public class DispatchTest {
 
 
         // Change this line for different Dispatches.
-        Dispatch dispatch = new Dispatch(graph, schedule.getDuration());
+        Dispatch dispatch = new Dispatch(graph);
 
         Plan plan = dispatch.dispatchTrains(schedule);
         DisplayGraph dg = new DisplayGraph(graph);
