@@ -49,7 +49,7 @@ public class OptimizedDispatch extends Dispatch {
     private Itinerary getOptimizedRoute(Train train) {
 
         // Setup.
-        graph.setPathComparator(new OptimizedPathComparator());
+//        graph.setPathComparator(new OptimizedPathComparator()); //TODO: Comparator needs more testing.
         Itinerary oldItin = train.getItinerary();
         Itinerary possibleItin = null;
 
