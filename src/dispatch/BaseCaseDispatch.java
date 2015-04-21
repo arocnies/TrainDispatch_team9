@@ -11,7 +11,7 @@ import graph.Path;
 public class BaseCaseDispatch extends Dispatch {
 
     public BaseCaseDispatch(Graph graph, int duration) {
-        super(graph);
+        super(graph, duration);
     }
 
     @Override

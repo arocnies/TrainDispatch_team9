@@ -20,7 +20,7 @@ public class Dataset {
 
         for (int i = n; i > 0; i--) {
             Schedule schedule = new Schedule(100, m.getNodes(), 1000);
-            Dispatch dispatch = new Dispatch(m);
+            Dispatch dispatch = new Dispatch(m, schedule.getDuration());
             Plan plan = dispatch.dispatchTrains(schedule);
 
             inputData.add( i , plan.getAverageDelay());

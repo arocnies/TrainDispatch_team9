@@ -12,7 +12,7 @@ public class OptimizedDispatch extends Dispatch {
     private WaitingEdgeComparator wec = new WaitingEdgeComparator(this);
 
     public OptimizedDispatch(Graph graph, int duration) {
-        super(graph);
+        super(graph, duration);
     }
 
     @Override
