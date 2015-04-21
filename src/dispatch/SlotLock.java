@@ -27,7 +27,6 @@ public class SlotLock<T> {
      * @throws InaccessibleLockException
      */
     public int acquireLock(int start, int slots, T t) throws InaccessibleLockException {
-        System.err.println(isLocked(start, slots));
         return setLock(start, slots, null, t);
     }
 

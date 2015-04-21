@@ -74,9 +74,9 @@ public class JFreeChartTest extends ApplicationFrame
                 Schedule slSchedule = new Schedule(i, m.getNodes(), 1000);
                 Schedule opSchedule = new Schedule(i, m.getNodes(), 1000);
 
-                Dispatch bcDispatch = new BaseCaseDispatch(m, bcSchedule.getDuration());
+                Dispatch bcDispatch = new BaseCaseDispatch(m);
                 Dispatch slDispatch = new Dispatch(m);
-                Dispatch opDispatch = new OptimizedDispatch(m, opSchedule.getDuration());
+                Dispatch opDispatch = new OptimizedDispatch(m);
 
                 Plan bcPlan = bcDispatch.dispatchTrains(bcSchedule);
                 Plan slPlan = slDispatch.dispatchTrains(slSchedule);

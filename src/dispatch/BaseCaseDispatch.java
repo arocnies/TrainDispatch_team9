@@ -1,6 +1,5 @@
 package dispatch;
 
-import graph.Edge;
 import graph.Graph;
 import graph.Path;
 
@@ -10,7 +9,7 @@ import graph.Path;
 
 public class BaseCaseDispatch extends Dispatch {
 
-    public BaseCaseDispatch(Graph graph, int duration) {
+    public BaseCaseDispatch(Graph graph) {
         super(graph);
     }
 
@@ -40,32 +39,30 @@ public class BaseCaseDispatch extends Dispatch {
             itin.addDelay(delay);
         }
         itin.addPath(path);
-
-        // Lock edges.
-        for (Edge edge : itin.getEdges()) {
-            if (edge.getStart() != null) {
-                try {
-                    SlotLock<Train> sl = locks.get(edge.getSharedId());
-                    sl.acquireLock(time, time + path.getCost(), train);
-                }
-                catch (InaccessibleLockException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        lockPath(path, time, path.getCost(), train);
 
         train.setItinerary(itin);
     }
 
     protected boolean isPathLocked(Path path, int start, int duration) {
-        for (Edge edge : path.getEdges()) {
-            if (edge.getStart() != null) {
-                SlotLock sl = locks.get(edge.getSharedId());
-                if (sl.isLocked(start, duration)) {
-                    return true;
-                }
+        for (String edgeId : path.getEdgeNameSet()) {
+            SlotLock sl = locks.get(edgeId);
+            if (sl.isLocked(start, duration)) {
+                return true;
             }
         }
         return false;
+    }
+
+    protected void lockPath(Path path, int start, int duration, Train t) {
+        try {
+            for (String edgeId : path.getEdgeNameSet()) {
+                SlotLock<Train> sl = locks.get(edgeId);
+                sl.acquireLock(start, duration, t);
+            }
+        }
+        catch (InaccessibleLockException e) {
+            e.printStackTrace();
+        }
     }
 }

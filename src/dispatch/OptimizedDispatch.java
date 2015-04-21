@@ -11,7 +11,7 @@ import java.util.*;
 public class OptimizedDispatch extends Dispatch {
     private WaitingEdgeComparator wec = new WaitingEdgeComparator(this);
 
-    public OptimizedDispatch(Graph graph, int duration) {
+    public OptimizedDispatch(Graph graph) {
         super(graph);
     }
 
