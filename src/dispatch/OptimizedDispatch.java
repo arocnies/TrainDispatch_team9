@@ -10,9 +10,15 @@ import java.util.*;
 
 public class OptimizedDispatch extends Dispatch {
     private WaitingEdgeComparator wec = new WaitingEdgeComparator();
+    private final int optimizationRunCount;
 
     public OptimizedDispatch(Graph graph) {
+        this(graph, 1);
+    }
+
+    public OptimizedDispatch(Graph graph, int runs) {
         super(graph);
+        optimizationRunCount = runs;
     }
 
     @Override
@@ -32,7 +38,7 @@ public class OptimizedDispatch extends Dispatch {
     public Plan dispatchTrains(Schedule schedule) {
         Plan plan = super.dispatchTrains(schedule);
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < optimizationRunCount; i++) {
             double prev = plan.getAverageDelay();
             plan = optimize(plan);
             if (plan.getAverageDelay() < prev) {
