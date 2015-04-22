@@ -15,10 +15,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
-/**
- * Package : PACKAGE_NAME
- * Created by J. Nguy on 4/18/2015.
- */
+
 public class JFreeChartTest extends ApplicationFrame
 {
     public JFreeChartTest( String applicationTitle, String chartTitle, Graph m, int n )
@@ -59,7 +56,7 @@ public class JFreeChartTest extends ApplicationFrame
         final XYSeries opSeries  = new XYSeries( "Optimized" );
 
         // Loops through train amounts.
-        for (int i = 1; i <= 500; i += 1) {
+        for (int i = 1; i <= 500; i += 500/500) {
 
             double bcSum = 0;
             double slSum = 0;

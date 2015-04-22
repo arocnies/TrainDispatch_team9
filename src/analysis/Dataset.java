@@ -29,7 +29,7 @@ public class Dataset {
 
 
         final XYSeriesCollection dataset = new XYSeriesCollection( );
-        dataset.addSeries( inputData);
+        dataset.addSeries(inputData);
 
         System.out.println("Average delay = " + totalAvrDelay / n);
 
