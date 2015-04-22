@@ -1,10 +1,7 @@
 /**
- * Created by J. Nguy on 4/21/2015.
-*/
-import dispatch.BaseCaseDispatch;
-import dispatch.Dispatch;
-import dispatch.Plan;
-import dispatch.Schedule;
+ * Created by J. Nguy on 4/18/2015.
+ */
+import dispatch.*;
 import graph.Graph;
 import graph.GraphFactory;
 import org.jfree.chart.ChartFactory;
@@ -12,8 +9,8 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.data.statistics.DefaultStatisticalCategoryDataset;
 import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
@@ -23,82 +20,125 @@ public class WhiskerTest extends ApplicationFrame
 {
     public WhiskerTest( String applicationTitle, String chartTitle, Graph m, int n )
     {
+        // Initial settings.
+
 
         // Setup.
         super(applicationTitle);
         JFreeChart xylineChart = ChartFactory.createXYLineChart(
                 chartTitle,
                 "Trains",
-                "Delay",
-                createDataset( m , n ),
+                "Performance",
+                inputSeries(n, m),
                 PlotOrientation.VERTICAL,
                 true, true, false);
 
         ChartPanel chartPanel = new ChartPanel( xylineChart );
         chartPanel.setPreferredSize( new java.awt.Dimension( 1200 , 700 ) );
         final XYPlot plot = xylineChart.getXYPlot();
+//        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+//
+//        // Sets the series to color RED
+//        renderer.setSeriesPaint(0, Color.RED);
+//
+//        //  Removes the boxes for the data points
+//        renderer.setSeriesShapesVisible(0, false);
+//
+//        // Thickness of the lines rendered
+//        renderer.setSeriesStroke( 0 , new BasicStroke( 1.0f ) );
+//
+//        plot.setRenderer( renderer );
         setContentPane( chartPanel );
     }
 
-    private XYDataset createDataset( Graph m , int trials)
-    {
-        final DefaultStatisticalCategoryDataset bcSeries = new DefaultStatisticalCategoryDataset();
-        //final XYSeries slSeries  = new XYSeries( "SingleLocking" );
-        //final XYSeries opSeries  = new XYSeries( "Optimized" );
-
-        // Loops through train amounts.
-        for (int i = 0; i <= 1000; i += 50) {
-
-            double bcSum = 0;
-            //double slSum = 0;
-            //double opSum = 0;
-
-            // Loop through trails.
-            for (int j = trials; j > 0; j--) {
-                Schedule bcSchedule = new Schedule(i, m.getNodes(), 1000);
-                //Schedule slSchedule = new Schedule(i, m.getNodes(), 1000);
-                //Schedule opSchedule = new Schedule(i, m.getNodes(), 1000);
-
-                Dispatch bcDispatch = new BaseCaseDispatch(m);
-                //Dispatch slDispatch = new Dispatch(m);
-                //Dispatch opDispatch = new OptimizedDispatch(m);
-
-                Plan bcPlan = bcDispatch.dispatchTrains(bcSchedule);
-                //Plan slPlan = slDispatch.dispatchTrains(slSchedule);
-                //Plan opPlan = opDispatch.dispatchTrains(opSchedule);
-
-                bcSum += bcPlan.getAverageDelay();
-                //slSum += slPlan.getAverageDelay();
-                //opSum += opPlan.getAverageDelay();
-            }
-            bcSeries.add(i, 1 / (bcSum / trials), "BaseCase", "Test");
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- DefaultStatisticalCategoryDataset()
-
- add(double mean, double standardDeviation, java.lang.Comparable rowKey, java.lang.Comparable columnKey)
-
-http://www.jfree.org/jfreechart/api/javadoc/org/jfree/data/statistics/DefaultStatisticalCategoryDataset.html
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-            //slSeries.add(i, 1 / (slSum / trials));
-            //opSeries.add(i, 1 / (opSum / trials));
-        }
 
 
+    private XYDataset inputSeries(int numOfSeries, Graph m) {
+
+        // Default parameters
+        String[] seriesNames = {"BaseCase", "SingleLocking", "Optimized"};
+        int maxTrains = 500;
+        int samples = 500;
+        Dispatch[] dispatches = {new BaseCaseDispatch(m), new Dispatch(m), new OptimizedDispatch(m)};
+
+
+        int k = 0;
         final XYSeriesCollection dataset = new XYSeriesCollection();
-//        dataset.addSeries(bcSeries);
-        //dataset.addSeries(slSeries);
-        //dataset.addSeries(opSeries);
+
+        for (int i = 0; i < numOfSeries; i++) {
+            XYSeries series1 = createSeries(seriesNames[k], dispatches[k], m, maxTrains, samples);
+            dataset.addSeries(series1);
+            k++;
+        }
 
         return dataset;
     }
 
+    private XYSeries createSeries(String name, Dispatch dispatch, Graph graph, int maxTrains, int samples/*, int trials*/) {
+        final XYSeries series = new XYSeries(name);
 
+        // Loops through train amounts.
+        for (int i = 1; i <= maxTrains; i += (maxTrains / samples)) {
+            Schedule schedule = new Schedule(i, graph.getNodes(), 1000);
+            Plan plan = dispatch.dispatchTrains(schedule);
+            series.add(i, plan.getAverageDelay());
+        }
+
+        return series;
+    }
+
+
+    /********************************************************************************
+     private XYDataset createDataset( Graph m , int trials) {
+
+         final XYSeries bcSeries = new XYSeries( "BaseCase" );
+         final XYSeries slSeries  = new XYSeries( "SingleLocking" );
+         final XYSeries opSeries  = new XYSeries( "Optimized" );
+
+         // Loops through train amounts.
+         for (int i = 1; i <= 500; i += 500/500) {
+
+             double bcSum = 0;
+             double slSum = 0;
+             double opSum = 0;
+
+             // Loop through trails.
+             for (int j = trials; j > 0; j--) {
+                 Schedule bcSchedule = new Schedule(i, m.getNodes(), 1000);
+                 Schedule slSchedule = new Schedule(i, m.getNodes(), 1000);
+                 Schedule opSchedule = new Schedule(i, m.getNodes(), 1000);
+
+                 Dispatch bcDispatch = new BaseCaseDispatch(m);
+                 Dispatch slDispatch = new Dispatch(m);
+                 Dispatch opDispatch = new OptimizedDispatch(m);
+
+                 Plan bcPlan = bcDispatch.dispatchTrains(bcSchedule);
+                 Plan slPlan = slDispatch.dispatchTrains(slSchedule);
+                 Plan opPlan = opDispatch.dispatchTrains(opSchedule);
+
+                 bcSum += bcPlan.getAverageDelay();
+                 slSum += slPlan.getAverageDelay();
+                 opSum += opPlan.getAverageDelay();
+             }
+             bcSeries.add(i, 1 / (bcSum / trials));
+             slSeries.add(i, 1 / (slSum / trials));
+             opSeries.add(i, 1 / (opSum / trials));
+         }
+
+
+         final XYSeriesCollection dataset = new XYSeriesCollection();
+         dataset.addSeries(bcSeries);
+         dataset.addSeries(slSeries);
+         dataset.addSeries(opSeries);
+
+         return dataset;
+     }
+
+     ********************************************************************************/
 
     public static void main( String[ ] args )
     {
+
         Graph graph = GraphFactory.generateGraph(args[0]);
         String title = args[0];
 

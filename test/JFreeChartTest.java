@@ -15,10 +15,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
-/**
- * Package : PACKAGE_NAME
- * Created by J. Nguy on 4/18/2015.
- */
+
 public class JFreeChartTest extends ApplicationFrame
 {
     public JFreeChartTest( String applicationTitle, String chartTitle, Graph m, int n )
@@ -52,6 +49,19 @@ public class JFreeChartTest extends ApplicationFrame
         setContentPane( chartPanel );
     }
 
+    private XYSeries createSeries(String name, Dispatch dispatch, Graph graph, int maxTrains, int samples) {
+        final XYSeries series = new XYSeries(name);
+
+        // Loops through train amounts.
+        for (int i = 1; i <= maxTrains; i += (maxTrains / samples)) {
+            Schedule schedule = new Schedule(i, graph.getNodes(), 1000);
+            Plan plan = dispatch.dispatchTrains(schedule);
+            series.add(i, plan.getAverageDelay());
+        }
+
+        return series;
+    }
+
     private XYDataset createDataset( Graph m , int trials)
     {
         final XYSeries bcSeries = new XYSeries( "BaseCase" );
@@ -59,7 +69,7 @@ public class JFreeChartTest extends ApplicationFrame
         final XYSeries opSeries  = new XYSeries( "Optimized" );
 
         // Loops through train amounts.
-        for (int i = 1; i <= 500; i += 1) {
+        for (int i = 1; i <= 500; i += 500/500) {
 
             double bcSum = 0;
             double slSum = 0;
