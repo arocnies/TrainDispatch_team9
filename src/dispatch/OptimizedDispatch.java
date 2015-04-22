@@ -10,15 +10,15 @@ import java.util.*;
 
 public class OptimizedDispatch extends Dispatch {
     private WaitingEdgeComparator wec = new WaitingEdgeComparator();
-    private final int optimizationRunCount;
+    private final int passes;
 
     public OptimizedDispatch(Graph graph) {
-        this(graph, 1);
+        this(graph, 2);
     }
 
     public OptimizedDispatch(Graph graph, int runs) {
         super(graph);
-        optimizationRunCount = runs;
+        passes = runs;
     }
 
     @Override
@@ -37,8 +37,9 @@ public class OptimizedDispatch extends Dispatch {
     @Override
     public Plan dispatchTrains(Schedule schedule) {
         Plan plan = super.dispatchTrains(schedule);
+        plan = preOptimize(plan);
 
-        for (int i = 0; i < optimizationRunCount; i++) {
+        for (int i = 0; i < passes; i++) {
             double prev = plan.getAverageDelay();
             plan = optimize(plan);
             if (plan.getAverageDelay() < prev) {
@@ -98,7 +99,6 @@ public class OptimizedDispatch extends Dispatch {
     }
 
     private Plan optimize(Plan plan) {
-        plan = preOptimize(plan);
 
         // Make list of Delays.
         List<Delay> delays = new LinkedList<>();
