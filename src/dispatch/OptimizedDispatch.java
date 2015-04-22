@@ -84,7 +84,7 @@ public class OptimizedDispatch extends Dispatch {
         // Make list of Delays.
         List<Delay> delays = new LinkedList<>();
         plan.getTrains().forEach(t -> delays.addAll(t.getItinerary().getDelays()));
-        delays.sort(new DelayComparator()); // Sort by time. Early -> later.
+        delays.sort(new DelayComparator()); // Sort by time. Later ---to---> earlier.
 
         // Make list of conflict trains.
         Queue<Train> trains = new LinkedList<>();
@@ -101,6 +101,7 @@ public class OptimizedDispatch extends Dispatch {
             }
         }
 
+        // Unlock Correction Group.
         for (Train t : trains) {
             Set<String> edgeIds = t.getItinerary().getEdgeNameSet();
             edgeIds.forEach(e -> locks.get(e).evictHolder(t));
