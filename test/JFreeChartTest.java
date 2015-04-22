@@ -52,6 +52,19 @@ public class JFreeChartTest extends ApplicationFrame
         setContentPane( chartPanel );
     }
 
+    private XYSeries createSeries(String name, Dispatch dispatch, Graph graph, int maxTrains, int samples) {
+        final XYSeries series = new XYSeries(name);
+
+        // Loops through train amounts.
+        for (int i = 1; i <= maxTrains; i += (maxTrains / samples)) {
+            Schedule schedule = new Schedule(i, graph.getNodes(), 1000);
+            Plan plan = dispatch.dispatchTrains(schedule);
+            series.add(i, plan.getAverageDelay());
+        }
+
+        return series;
+    }
+
     private XYDataset createDataset( Graph m , int trials)
     {
         final XYSeries bcSeries = new XYSeries( "BaseCase" );
