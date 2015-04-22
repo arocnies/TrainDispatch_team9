@@ -111,6 +111,7 @@ public class OptimizedDispatch extends Dispatch {
         return plan;
     }
 
+    @Deprecated
     private Train rerouteTrain(Train train) {
 
         // Pre recursion. (Unlock train).
@@ -157,14 +158,16 @@ public class OptimizedDispatch extends Dispatch {
             return w1 - w2;
         }
     }
-}
 
-// Class for prioritizing delays.
-class DelayComparator implements Comparator<Delay> {
+    // Class for prioritizing delays.
+    class DelayComparator implements Comparator<Delay> {
 
-    @Override
-    public int compare(Delay o1, Delay o2) {
-        return o2.getTime() - o1.getTime(); // Later in time delays are better.
+        @Override
+        public int compare(Delay o1, Delay o2) {
+            return o2.getTime() - o1.getTime(); // Later in time delays are better.
+        }
     }
 }
+
+
 
