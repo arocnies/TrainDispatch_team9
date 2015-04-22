@@ -79,7 +79,20 @@ public class OptimizedDispatch extends Dispatch {
         return oldItin;
     }
 
+    private Plan preOptimize(Plan plan) {
+        List<Train> ts = new ArrayList<>(plan.getTrains());
+        Collections.sort(ts, Collections.reverseOrder());
+        // Unlock Correction Group.
+        for (Train t : ts) {
+            Set<String> edgeIds = t.getItinerary().getEdgeNameSet();
+            edgeIds.forEach(e -> locks.get(e).evictHolder(t));
+        }
+        ts.forEach(t -> t.setItinerary(getOptimizedRoute(t)));
+        return plan;
+    }
+
     private Plan optimize(Plan plan) {
+        plan = preOptimize(plan);
 
         // Make list of Delays.
         List<Delay> delays = new LinkedList<>();
@@ -103,11 +116,17 @@ public class OptimizedDispatch extends Dispatch {
 
         // Unlock Correction Group.
         for (Train t : trains) {
-            Set<String> edgeIds = t.getItinerary().getEdgeNameSet();
-            edgeIds.forEach(e -> locks.get(e).evictHolder(t));
+            if (t != null) {
+                Set<String> edgeIds = t.getItinerary().getEdgeNameSet();
+                edgeIds.forEach(e -> locks.get(e).evictHolder(t));
+            }
         }
         graph.setPathComparator(new OptimizedPathComparator());
-        trains.forEach(t -> t.setItinerary(getOptimizedRoute(t)));
+        for (Train t : trains) {
+            if (t != null) {
+                t.setItinerary(getOptimizedRoute(t));
+            }
+        }
         graph.setPathComparator(new PathComparator());
         return plan;
     }
