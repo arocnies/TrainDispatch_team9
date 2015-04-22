@@ -10,7 +10,7 @@ import visualization.DisplayGraph;
 public class DispatchTest {
     public static void main(String[] args) {
 
-        Graph graph = GraphFactory.generateGraph("res/germany_map.graph");
+        Graph graph = GraphFactory.generateGraph(args[0]);
         System.out.println(graph);
 
         Schedule schedule = new Schedule(30, graph.getNodes(), 1);
