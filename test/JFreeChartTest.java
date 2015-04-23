@@ -88,7 +88,7 @@ public class JFreeChartTest extends ApplicationFrame
         double[] opPercent = new double[trainsPlus];
 
         // Loops through train amounts.
-        for (int i = 1; i <= trains; i += samples) {
+        for (int i = 1; i <= trains; i += trains / samples) {
 
             double bcSum = 0;
             double slSum = 0;

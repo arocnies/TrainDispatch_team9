@@ -75,6 +75,5 @@ public class DispatchTest {
     }
     public static void main(String[] args) {
         DispatchVisualization(args[0], args[1]);
-
     }
 }
