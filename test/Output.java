@@ -11,7 +11,7 @@ public class Output {
         // Checks for program arguments
         if(args.length == 0)
         {
-            System.out.println("Please input the map [i.e. res\\name_of_map.graph] : ");
+            System.out.println("Please input the map [i.e. name_of_map.graph] : ");
             userMap = sc.next();
 
             System.out.println("Please input the dispatch for the visualization [1 for Base Case - 2 for Single Locking - 3 for Optimized] : ");
@@ -23,7 +23,7 @@ public class Output {
             System.out.println("Please input the max number of trains : ");
             userTrains = sc.next();
 
-            System.out.println("Please input the number of samples per test : ");
+            System.out.println("Please input the number of train samples per test : ");
             userSamples = sc.next();
         } else {
             userMap = args[0];
