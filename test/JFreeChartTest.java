@@ -1,6 +1,8 @@
 /**
  * Created by J. Nguy on 4/18/2015.
  */
+
+import analysis.Calculations;
 import dispatch.*;
 import graph.Graph;
 import graph.GraphFactory;
@@ -15,10 +17,14 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
 
 public class JFreeChartTest extends ApplicationFrame
 {
-    public JFreeChartTest( String applicationTitle, String chartTitle, Graph m, int n )
+    public JFreeChartTest( String applicationTitle, String chartTitle, Graph m, int n, int trains, int samples )
     {
 
         // Setup.
@@ -27,7 +33,7 @@ public class JFreeChartTest extends ApplicationFrame
                 chartTitle,
                 "Trains",
                 "Performance",
-                createDataset( m , n ),
+                createDataset(m, n, trains, samples),
                 PlotOrientation.VERTICAL,
                 true, true, false);
 
@@ -62,18 +68,38 @@ public class JFreeChartTest extends ApplicationFrame
         return series;
     }
 
-    private XYDataset createDataset( Graph m , int trials)
+    private XYDataset createDataset( Graph m , int trials, int trains, int samples)
     {
         final XYSeries bcSeries = new XYSeries( "BaseCase" );
         final XYSeries slSeries  = new XYSeries( "SingleLocking" );
         final XYSeries opSeries  = new XYSeries( "Optimized" );
+        int trainsPlus = trains + 1;
+
+        double[] bcFileOut = new double[trainsPlus];
+        double[] slFileOut = new double[trainsPlus];
+        double[] opFileOut = new double[trainsPlus];
+
+        double[] bcResult = new double[trainsPlus];
+        double[] slResult = new double[trainsPlus];
+        double[] opResult = new double[trainsPlus];
+
+        double[] bcPercent = new double[trainsPlus];
+        double[] slPercent = new double[trainsPlus];
+        double[] opPercent = new double[trainsPlus];
 
         // Loops through train amounts.
-        for (int i = 1; i <= 500; i += 500/500) {
+        for (int i = 1; i <= trains; i += samples) {
 
             double bcSum = 0;
             double slSum = 0;
             double opSum = 0;
+
+            double[] bcArray = new double[trials];
+            double[] slArray = new double[trials];
+            double[] opArray = new double[trials];
+
+
+            int k = 0;
 
             // Loop through trails.
             for (int j = trials; j > 0; j--) {
@@ -89,6 +115,12 @@ public class JFreeChartTest extends ApplicationFrame
                 Plan slPlan = slDispatch.dispatchTrains(slSchedule);
                 Plan opPlan = opDispatch.dispatchTrains(opSchedule);
 
+                bcArray[k] = bcPlan.getDelayCount();
+                slArray[k] = slPlan.getDelayCount();
+                opArray[k] = opPlan.getDelayCount();
+
+                k++;
+
                 bcSum += bcPlan.getAverageDelay();
                 slSum += slPlan.getAverageDelay();
                 opSum += opPlan.getAverageDelay();
@@ -96,6 +128,45 @@ public class JFreeChartTest extends ApplicationFrame
             bcSeries.add(i, 1 / (bcSum / trials));
             slSeries.add(i, 1 / (slSum / trials));
             opSeries.add(i, 1 / (opSum / trials));
+
+            bcResult[i] = 1 / (bcSum / trials);
+            slResult[i] = 1 / (slSum / trials);
+            opResult[i] = 1 / (opSum / trials);
+
+            double bc = Calculations.deviation(bcArray);
+            double sl = Calculations.deviation(slArray);
+            double op = Calculations.deviation(opArray);
+
+            bcPercent[i] = (bc / (1 / (bcSum / trials)));
+            slPercent[i] = (sl / (1 / (slSum / trials)));
+            opPercent[i] = (op / (1 / (opSum / trials)));
+
+            bcFileOut[i] = bc;
+            slFileOut[i] = sl;
+            opFileOut[i] = op;
+
+
+        }
+
+
+        // Output the standard deviation results to a text file for each dispatch
+        try {
+            PrintStream bcOut = new PrintStream(new FileOutputStream("StdDev_BaseCase.txt"));
+            PrintStream slOut = new PrintStream(new FileOutputStream("StdDev_SingleLocking.txt"));
+            PrintStream opOut = new PrintStream(new FileOutputStream("StdDev_Optimized.txt"));
+            bcOut.printf("Base Case Results %nNumber of Trains        Result       StdDev%n");
+            slOut.printf("S Locking Results %nNumber of Trains        Result       StdDev%n");
+            opOut.printf("Optimized Results %nNumber of Trains        Result       StdDev%n");
+            for (int i = 0; i < trains; i++) {
+                bcOut.printf("%14d%15.3f%11.3s%% %n", i, bcResult[i], bcFileOut[i]);
+                slOut.printf("%14d%15.3f%11.3s%% %n", i, slResult[i], slFileOut[i]);
+                opOut.printf("%14d%15.3f%11.3s%% %n", i, opResult[i], opFileOut[i]);
+            }
+            bcOut.close();
+            slOut.close();
+            opOut.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
 
 
@@ -116,9 +187,11 @@ public class JFreeChartTest extends ApplicationFrame
 
         int tests = Integer.parseInt(args[1]);
         long start = System.currentTimeMillis();
+        int trains = Integer.parseInt(args[2]);
+        int samples = Integer.parseInt(args[3]);
 
 
-        JFreeChartTest chart = new JFreeChartTest("Analysis", title, graph, tests);
+        JFreeChartTest chart = new JFreeChartTest("Analysis", title, graph, tests, trains, samples);
         chart.pack();
         RefineryUtilities.centerFrameOnScreen(chart);
         chart.setVisible(true);
