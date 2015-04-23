@@ -178,25 +178,27 @@ public class JFreeChartTest extends ApplicationFrame
         return dataset;
     }
 
+public static void JFreeCreation(String graphName, String titleIn, String testsIn, String trainsIn, String samplesIn) {
+    Graph graph = GraphFactory.generateGraph(graphName);
+    String title = titleIn;
 
+    int tests = Integer.parseInt(testsIn);
+    long start = System.currentTimeMillis();
+    int trains = Integer.parseInt(trainsIn);
+    int samples = Integer.parseInt(samplesIn);
+
+
+    JFreeChartTest chart = new JFreeChartTest("Analysis", title, graph, tests, trains, samples);
+    chart.pack();
+    RefineryUtilities.centerFrameOnScreen(chart);
+    chart.setVisible(true);
+
+    System.out.println("Tests = " + tests);
+    System.out.println("Runtime = " + (System.currentTimeMillis() - start) / 1000.0);
+}
 
     public static void main( String[ ] args )
     {
-        Graph graph = GraphFactory.generateGraph(args[0]);
-        String title = args[0];
-
-        int tests = Integer.parseInt(args[1]);
-        long start = System.currentTimeMillis();
-        int trains = Integer.parseInt(args[2]);
-        int samples = Integer.parseInt(args[3]);
-
-
-        JFreeChartTest chart = new JFreeChartTest("Analysis", title, graph, tests, trains, samples);
-        chart.pack();
-        RefineryUtilities.centerFrameOnScreen(chart);
-        chart.setVisible(true);
-
-        System.out.println("Tests = " + tests);
-        System.out.println("Runtime = " + (System.currentTimeMillis() - start) / 1000.0);
+        JFreeCreation(args[0], args[0], args[1], args[2], args[3]);
     }
 }

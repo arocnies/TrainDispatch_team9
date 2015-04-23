@@ -38,6 +38,29 @@ public class VisualizationTest {
         displayAllPaths(1000);
     }
 
+    public static void GraphStreamGeneration(String graphIn) {
+
+        // Create graphs using provided args.
+        graph = GraphFactory.generateGraph(graphIn);
+        gsGraph = loadGsGraph(graph);
+        style = new Styles();
+
+        // Improve the output and initial labeling
+        gsGraph.addAttribute("ui.quality");
+        gsGraph.addAttribute("ui.antialias");
+        gsGraph.addAttribute("ui.stylesheet", style.standardNode());
+        System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+
+        // Displays the graph
+        gsGraph.display();
+
+        // Displays labels for all nodes.
+        gsGraph.getNodeSet().forEach(n -> n.addAttribute("ui.label", n.getId()));
+
+        // Display paths with one second interval.
+        displayAllPaths(1000);
+
+    }
     // --------------- Other methods ---------------
 
     private static void paintPath(Node n1, Node n2) {
